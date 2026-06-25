@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GEIE - Gestao de Espacos e Infraestrutura Escolar</title>
+<style>
+  :root{
+    --azul:#1f4e8c; --azul2:#2f6fbf; --verde:#2e9e5b; --vermelho:#cc3b3b;
+    --amarelo:#e0a800; --cinza:#f0f2f5; --texto:#222; --borda:#d8dde6;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Arial,sans-serif}
+  body{background:#e7ebf1;color:var(--texto);padding:20px;display:flex;flex-direction:column;align-items:center}
+  header.topo{text-align:center;margin-bottom:16px}
+  header.topo h1{color:var(--azul);font-size:20px}
+  header.topo p{color:#5a6473;font-size:13px;margin-top:4px}
+
+  /* moldura de celular */
+  .phone{width:360px;max-width:100%;background:#fff;border:10px solid #2b2f36;border-radius:30px;
+    overflow:hidden;box-shadow:0 12px 30px rgba(0,0,0,.25);min-height:640px;position:relative}
+  .statusbar{background:#2b2f36;color:#fff;font-size:11px;padding:4px 14px;display:flex;justify-content:space-between}
+  .appbar{background:var(--azul);color:#fff;padding:14px 16px;display:flex;align-items:center;gap:10px}
+  .appbar .back{cursor:pointer;font-size:18px;background:none;border:none;color:#fff}
+  .appbar h2{font-size:15px;font-weight:600}
+  .screen{padding:18px 16px 80px;min-height:560px}
+  .screen.hidden{display:none}
+
+  /* desktop dashboard wrapper */
+  .desktop{width:920px;max-width:100%;background:#fff;border:1px solid var(--borda);border-radius:12px;
+    overflow:hidden;box-shadow:0 12px 30px rgba(0,0,0,.18)}
+  .desktop.hidden{display:none}
+
+  h3{color:var(--azul);font-size:16px;margin-bottom:10px}
+  p.lead{font-size:13px;color:#555;margin-bottom:14px;line-height:1.5}
+  label{font-size:12px;color:#555;display:block;margin:10px 0 4px}
+  select,input{width:100%;padding:9px;border:1px solid var(--borda);border-radius:8px;font-size:13px}
+
+  .btn{display:block;width:100%;background:var(--azul2);color:#fff;border:none;padding:12px;border-radius:10px;
+    font-size:14px;font-weight:600;cursor:pointer;margin-top:14px}
+  .btn:hover{background:var(--azul)}
+  .btn.verde{background:var(--verde)}
+  .btn.ghost{background:#eef2f8;color:var(--azul)}
+
+  .home-card{display:flex;gap:12px;align-items:center;border:1px solid var(--borda);border-radius:12px;
+    padding:14px;margin-bottom:12px;cursor:pointer;transition:.15s}
+  .home-card:hover{border-color:var(--azul2);background:#f6f9ff}
+  .home-card .ico{width:42px;height:42px;border-radius:10px;background:var(--azul);color:#fff;display:flex;
+    align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+  .home-card b{font-size:14px;color:var(--azul)}
+  .home-card small{display:block;color:#667;font-size:11px;margin-top:2px}
+
+  .chip{display:inline-block;background:#eef2f8;color:var(--azul);border-radius:20px;padding:5px 11px;
+    font-size:11px;margin:3px 4px 3px 0;cursor:pointer;border:1px solid transparent}
+  .chip.on{background:var(--azul);color:#fff}
+
+  .sala{border:1px solid var(--borda);border-radius:10px;padding:12px;margin-bottom:10px}
+  .sala b{font-size:14px}
+  .sala small{color:#667;font-size:11px}
+  .tag{font-size:10px;background:#eaf6ee;color:var(--verde);padding:2px 7px;border-radius:6px;margin-left:6px}
+
+  .qr{width:150px;height:150px;margin:14px auto;display:block;background:
+    conic-gradient(#000 25%,#fff 0 50%,#000 0 75%,#fff 0);border:8px solid #000;border-radius:6px}
+  .ok-circle{width:64px;height:64px;border-radius:50%;background:var(--verde);color:#fff;font-size:34px;
+    display:flex;align-items:center;justify-content:center;margin:10px auto}
+
+  /* mini mapa do campus */
+  .mapa{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}
+  .room{aspect-ratio:1;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    font-size:10px;color:#fff;cursor:pointer;font-weight:600;border:3px solid transparent}
+  .room.livre{background:var(--verde)}
+  .room.ocupada{background:var(--vermelho);cursor:not-allowed;opacity:.85}
+  .room.sel{border-color:#2b2f36}
+  .legenda{font-size:11px;display:flex;gap:14px;margin-bottom:6px}
+  .legenda span{display:flex;align-items:center;gap:5px}
+  .dot{width:11px;height:11px;border-radius:3px;display:inline-block}
+
+  /* dashboard */
+  .dash-top{background:var(--azul);color:#fff;padding:16px 22px;display:flex;justify-content:space-between;align-items:center}
+  .dash-body{padding:22px;display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .kpis{grid-column:1/3;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .kpi{background:var(--cinza);border-radius:10px;padding:14px;text-align:center}
+  .kpi b{font-size:22px;color:var(--azul);display:block}
+  .kpi small{font-size:11px;color:#667}
+  .panel{border:1px solid var(--borda);border-radius:12px;padding:16px}
+  .panel h4{font-size:13px;color:var(--azul);margin-bottom:10px}
+  .alerta{background:#fff7e6;border:1px solid var(--amarelo);border-radius:10px;padding:12px;font-size:12px;margin-bottom:10px}
+  .alerta.vermelho{background:#fdeaea;border-color:var(--vermelho)}
+  table{width:100%;border-collapse:collapse;font-size:12px}
+  th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--borda)}
+  th{color:#667;font-weight:600}
+  .badge{font-size:10px;padding:2px 7px;border-radius:6px}
+  .badge.r{background:#fdeaea;color:var(--vermelho)}
+  .badge.o{background:#eaf6ee;color:var(--verde)}
+  .switch{font-size:12px;color:var(--azul2);cursor:pointer;text-decoration:underline;margin-top:14px;display:inline-block}
+
+  /* navegacao / rota */
+  .rota{position:relative;background:var(--cinza);border-radius:10px;height:200px;margin:12px 0;overflow:hidden}
+  .rota svg{width:100%;height:100%}
+  footer.rodape{margin-top:18px;font-size:11px;color:#7a8595;text-align:center;max-width:560px}
+  .persona-bar{font-size:11px;color:#fff;background:var(--azul2);padding:6px 16px;text-align:center}
+</style>
+</head>
+<body>
+
+<header class="topo">
+  <h1>GEIE &middot; Gestao de Espacos e Infraestrutura Escolar</h1>
+  <p>Prototipo de apresentacao &mdash; IFAL / Interacao Humano-Computador</p>
+</header>
+
+<!-- ================= CELULAR (Augusto, Ana, Gabriela, Home) ================= -->
+<div class="phone" id="phone">
+  <div class="statusbar"><span>18:40</span><span>GEIE &nbsp; 4G &nbsp; 100%</span></div>
+
+  <!-- HOME -->
+  <div id="s-home">
+    <div class="appbar"><h2>GEIE &mdash; Inicio</h2></div>
+    <div class="screen">
+      <p class="lead">Selecione um cenario para navegar pelo prototipo. Cada um representa uma proto-persona do documento.</p>
+
+      <div class="home-card" onclick="go('augusto')">
+        <div class="ico">&#128269;</div>
+        <div><b>Buscar Sala Agora</b><small>Augusto, 42 &middot; Professor de Fisica &mdash; imprevisto em sala</small></div>
+      </div>
+      <div class="home-card" onclick="go('ana')">
+        <div class="ico">&#128197;</div>
+        <div><b>Novo Agendamento</b><small>Ana, 22 &middot; Aluna / Coord. de extensao &mdash; reserva agil</small></div>
+      </div>
+      <div class="home-card" onclick="go('gabriela')">
+        <div class="ico">&#128205;</div>
+        <div><b>Buscar Salas Ocupadas</b><small>Gabriela, 19 &middot; Discente de SI &mdash; onde e a aula?</small></div>
+      </div>
+      <div class="home-card" onclick="showDash()">
+        <div class="ico">&#128202;</div>
+        <div><b>Painel de Controle</b><small>Marcos, 51 &middot; Coord. administrativo &mdash; visao estrategica (desktop)</small></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== AUGUSTO ===== -->
+  <div id="s-augusto" class="hidden">
+    <div class="appbar"><button class="back" onclick="go('home')">&#8592;</button><h2>Buscar Sala Agora</h2></div>
+    <div class="persona-bar">Cenario 1 &middot; Augusto Carlos &middot; objetivo: sala com projetor em minutos</div>
+    <div class="screen" id="aug-1">
+      <h3>Filtros rapidos</h3>
+      <p class="lead">Sala habitual trancada por manutencao. Restam 10 min para a aula.</p>
+      <div>
+        <span class="chip on" onclick="this.classList.toggle('on')">Disponibilidade imediata</span>
+        <span class="chip on" onclick="this.classList.toggle('on')">Capacidade 40+</span>
+        <span class="chip on" onclick="this.classList.toggle('on')">Projetor</span>
+        <span class="chip" onclick="this.classList.toggle('on')">Tomada</span>
+        <span class="chip" onclick="this.classList.toggle('on')">Ar-condicionado</span>
+      </div>
+      <button class="btn" onclick="step('aug',2)">Buscar agora</button>
+    </div>
+    <div class="screen hidden" id="aug-2">
+      <h3>Salas encontradas</h3>
+      <div class="sala">
+        <b>Bloco C &middot; Sala C-204 <span class="tag">disponivel</span></b><br>
+        <small>Capacidade 45 &middot; Projetor &middot; 2 min de distancia</small>
+        <button class="btn verde" onclick="step('aug',3)">Reservar</button>
+      </div>
+      <div class="sala">
+        <b>Bloco B &middot; Auditorio B-1 <span class="tag">disponivel</span></b><br>
+        <small>Capacidade 80 &middot; Projetor &middot; 6 min de distancia</small>
+        <button class="btn ghost" onclick="step('aug',3)">Reservar</button>
+      </div>
+    </div>
+    <div class="screen hidden" id="aug-3">
+      <div class="ok-circle">&#10003;</div>
+      <h3 style="text-align:center">Reserva aprovada</h3>
+      <p class="lead" style="text-align:center">Seguranca notificada para liberar a porta remotamente. Use o QR Code abaixo para acessar a sala C-204.</p>
+      <div class="qr"></div>
+      <p class="lead" style="text-align:center">Sala C-204 &middot; valido das 18:50 as 20:30</p>
+      <button class="btn ghost" onclick="go('home')">Voltar ao inicio</button>
+    </div>
+  </div>
+
+  <!-- ===== ANA ===== -->
+  <div id="s-ana" class="hidden">
+    <div class="appbar"><button class="back" onclick="go('home')">&#8592;</button><h2>Novo Agendamento</h2></div>
+    <div class="persona-bar">Cenario 2 &middot; Ana Lima &middot; objetivo: reservar sala sem depender de e-mail</div>
+    <div class="screen" id="ana-1">
+      <h3>Dados da reserva</h3>
+      <label>Data</label><input type="date" value="2026-06-26">
+      <label>Inicio</label><input type="time" value="14:00">
+      <label>Termino</label><input type="time" value="16:00">
+      <label>Categoria</label>
+      <select><option>Salas de Reuniao / Estudo</option><option>Salas de aula</option><option>Laboratorios</option><option>Auditorios</option></select>
+      <button class="btn" onclick="step('ana',2)">Ver mapa de salas</button>
+    </div>
+    <div class="screen hidden" id="ana-2">
+      <h3>Mapa do campus</h3>
+      <div class="legenda">
+        <span><i class="dot" style="background:var(--verde)"></i>Livre</span>
+        <span><i class="dot" style="background:var(--vermelho)"></i>Ocupada</span>
+      </div>
+      <div class="mapa" id="ana-mapa">
+        <div class="room livre" onclick="selRoom(this,'R-101')">R-101</div>
+        <div class="room ocupada">R-102</div>
+        <div class="room livre" onclick="selRoom(this,'R-103')">R-103</div>
+        <div class="room ocupada">R-104</div>
+        <div class="room ocupada">R-105</div>
+        <div class="room livre" onclick="selRoom(this,'R-106')">R-106</div>
+        <div class="room livre" onclick="selRoom(this,'R-107')">R-107</div>
+        <div class="room ocupada">R-108</div>
+      </div>
+      <label>Justificativa</label>
+      <input id="ana-just" placeholder="Ex: Reuniao do projeto de extensao" value="Reuniao do projeto de extensao">
+      <button class="btn verde" id="ana-confirm" disabled onclick="step('ana',3)">Confirmar agendamento</button>
+    </div>
+    <div class="screen hidden" id="ana-3">
+      <div class="ok-circle">&#10003;</div>
+      <h3 style="text-align:center">Agendamento confirmado</h3>
+      <p class="lead" style="text-align:center">Sala <b id="ana-sala-txt">R-101</b> reservada para 26/06 das 14h as 16h.</p>
+      <div class="sala">&#128196; Comprovante_reserva.pdf <span class="tag">gerado</span></div>
+      <div class="sala">&#128467; Convite de calendario <span class="tag">enviado</span></div>
+      <button class="btn ghost" onclick="go('home')">Voltar ao inicio</button>
+    </div>
+  </div>
+
+  <!-- ===== GABRIELA ===== -->
+  <div id="s-gabriela" class="hidden">
+    <div class="appbar"><button class="back" onclick="go('home')">&#8592;</button><h2>Buscar Salas Ocupadas</h2></div>
+    <div class="persona-bar">Cenario 4 &middot; Gabriela Ciresi &middot; objetivo: descobrir para qual sala ir</div>
+    <div class="screen" id="gab-1">
+      <h3>Onde e a minha aula?</h3>
+      <p class="lead">Sala habitual trancada para manutencao. Localize a sala da disciplina.</p>
+      <label>Curso</label>
+      <select><option>Sistemas de Informacao</option><option>Engenharia</option><option>Licenciaturas</option></select>
+      <label>Codigo da disciplina</label>
+      <input value="SI-302 (Fisica)">
+      <button class="btn" onclick="step('gab',2)">Localizar sala</button>
+    </div>
+    <div class="screen hidden" id="gab-2">
+      <h3>Aula localizada</h3>
+      <div class="sala">
+        <b>SI-302 &middot; Fisica <span class="tag">em andamento</span></b><br>
+        <small>Realocada para: Bloco D &middot; Sala D-110 &middot; inicio 18:50</small>
+      </div>
+      <p class="lead">Rota ate a sala D-110:</p>
+      <div class="rota">
+        <svg viewBox="0 0 300 200">
+          <rect x="20" y="150" width="40" height="30" fill="#cc3b3b" opacity=".8"/>
+          <text x="40" y="145" font-size="9" text-anchor="middle" fill="#444">Voce</text>
+          <path d="M40 150 L40 90 L150 90 L150 40 L250 40" stroke="#2f6fbf" stroke-width="5" fill="none" stroke-dasharray="8 6"/>
+          <circle cx="250" cy="40" r="10" fill="#2e9e5b"/>
+          <text x="250" y="22" font-size="9" text-anchor="middle" fill="#444">D-110</text>
+        </svg>
+      </div>
+      <p class="lead" style="text-align:center">Tempo estimado de caminhada: 6 min &middot; chegada prevista 18:56</p>
+      <button class="btn ghost" onclick="go('home')">Voltar ao inicio</button>
+    </div>
+  </div>
+
+</div><!-- /phone -->
+
+<!-- ================= DESKTOP (Marcos) ================= -->
+<div class="desktop hidden" id="desktop">
+  <div class="dash-top">
+    <div><b>GEIE &middot; Painel de Controle</b><div style="font-size:11px;opacity:.85">Marcos Ramos &middot; Coordenacao administrativa</div></div>
+    <button class="btn ghost" style="width:auto;margin:0;padding:8px 14px" onclick="hideDash()">Sair</button>
+  </div>
+  <div class="dash-body">
+    <div class="kpis">
+      <div class="kpi"><b>72%</b><small>Ocupacao agora</small></div>
+      <div class="kpi"><b>38</b><small>Salas em uso</small></div>
+      <div class="kpi"><b>2</b><small>Alertas ativos</small></div>
+      <div class="kpi"><b>14%</b><small>Ociosidade media</small></div>
+    </div>
+
+    <div class="panel">
+      <h4>Alertas em tempo real</h4>
+      <div class="alerta">
+        &#9888; <b>Lab. reservado, porem vazio</b><br>
+        Sensores indicam Lab-03 sem presenca ha 30 min, apesar de constar como "Reservado".
+        <button class="btn" style="margin-top:8px;padding:7px" onclick="alert('Reserva liberada. Sala devolvida ao pool de disponiveis.')">Liberar sala</button>
+      </div>
+      <div class="alerta vermelho">
+        &#9888; <b>Conflito de agendamento potencial</b><br>
+        Dois professores alocaram o Auditorio Principal na sexta, 14h.
+        <button class="btn" style="margin-top:8px;padding:7px;background:var(--vermelho)"
+          onclick="alert('Mensagem automatica enviada ao ultimo solicitante com sala alternativa de igual capacidade (1 clique).')">
+          Resolver conflito</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h4>Ocupacao por sala</h4>
+      <table>
+        <tr><th>Sala</th><th>Status</th><th>Sensor</th></tr>
+        <tr><td>Lab-03</td><td><span class="badge r">Reservado</span></td><td>Vazio 30 min</td></tr>
+        <tr><td>Sala C-204</td><td><span class="badge o">Em uso</span></td><td>Presenca</td></tr>
+        <tr><td>Auditorio Principal</td><td><span class="badge r">Conflito</span></td><td>Vazio</td></tr>
+        <tr><td>Sala B-110</td><td><span class="badge o">Em uso</span></td><td>Presenca</td></tr>
+        <tr><td>Lab-07</td><td><span class="badge o">Em uso</span></td><td>Presenca</td></tr>
+      </table>
+      <span class="switch" onclick="alert('Relatorio_Mensal_Ociosidade.pdf exportado. Identifica laboratorios subutilizados em horarios-chave para remanejar turmas.')">
+        &#11015; Exportar Relatorio Mensal de Ociosidade</span>
+    </div>
+
+    <div class="panel">
+      <h4>Ociosidade por horario (semana)</h4>
+      <table>
+        <tr><th>Horario</th><th>Salas ociosas</th><th>Acao sugerida</th></tr>
+        <tr><td>08h-10h</td><td>3</td><td>Remanejar turma A</td></tr>
+        <tr><td>10h-12h</td><td>1</td><td>-</td></tr>
+        <tr><td>14h-16h</td><td>5</td><td>Otimizar alocacao</td></tr>
+        <tr><td>16h-18h</td><td>2</td><td>-</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<footer class="rodape">
+  Prototipo de baixa fidelidade, apenas para fins de apresentacao. Dados simulados.
+  Cenarios: Augusto Carlos, Ana Lima, Marcos Ramos e Gabriela Ciresi.
+</footer>
+
+<script>
+  function hideAllPhone(){
+    ['s-home','s-augusto','s-ana','s-gabriela'].forEach(id=>document.getElementById(id).classList.add('hidden'));
+  }
+  function go(name){
+    document.getElementById('desktop').classList.add('hidden');
+    document.getElementById('phone').style.display='';
+    hideAllPhone();
+    document.getElementById('s-'+name).classList.remove('hidden');
+    // reset internal steps
+    ['augusto','ana','gabriela'].forEach(resetSteps);
+  }
+  function resetSteps(p){
+    const pre={augusto:'aug',ana:'ana',gabriela:'gab'}[p];
+    for(let i=1;i<=3;i++){const el=document.getElementById(pre+'-'+i); if(el) el.classList.toggle('hidden', i!==1);}
+  }
+  function step(pre,n){
+    for(let i=1;i<=3;i++){const el=document.getElementById(pre+'-'+i); if(el) el.classList.toggle('hidden', i!==n);}
+  }
+  function selRoom(el,nome){
+    document.querySelectorAll('#ana-mapa .room').forEach(r=>r.classList.remove('sel'));
+    el.classList.add('sel');
+    document.getElementById('ana-confirm').disabled=false;
+    document.getElementById('ana-sala-txt').textContent=nome;
+  }
+  function showDash(){
+    document.getElementById('phone').style.display='none';
+    document.getElementById('desktop').classList.remove('hidden');
+  }
+  function hideDash(){
+    document.getElementById('desktop').classList.add('hidden');
+    document.getElementById('phone').style.display='';
+    go('home');
+  }
+</script>
+</body>
+</html>
