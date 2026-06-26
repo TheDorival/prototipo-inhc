@@ -53,8 +53,8 @@ function Shell() {
         </div>
       </header>
 
-      <div className="mx-auto flex max-w-[1280px]">
-        <aside className="sticky top-14 hidden h-[calc(100vh-56px)] w-60 shrink-0 border-r border-line bg-canvas py-4 md:block">
+      <div className="mx-auto flex max-w-[1400px]">
+        <aside className="sticky top-14 hidden h-[calc(100vh-56px)] w-64 shrink-0 border-r border-line bg-canvas py-4 md:block">
           <nav className="flex flex-col gap-0.5 px-2">
             {itens.map((n, i) => n.g ? (
               <div key={i} className="px-3 pb-1 pt-4 text-[11px] font-semibold uppercase tracking-wide text-muted">{n.g}</div>
@@ -67,8 +67,8 @@ function Shell() {
           </nav>
         </aside>
 
-        <main className="min-h-[calc(100vh-56px)] flex-1 bg-subtle p-6">
-          <div className="mx-auto max-w-4xl">
+        <main className="min-h-[calc(100vh-56px)] flex-1 bg-subtle px-8 py-6">
+          <div className="w-full">
             <Routes>
               <Route path="/" element={<Inicio />} />
               <Route path="/buscar" element={<Guard path="/buscar"><Buscar /></Guard>} />
