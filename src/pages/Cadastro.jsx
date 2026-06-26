@@ -19,8 +19,9 @@ export default function Cadastro() {
   }
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-subtle px-4 py-8">
-      <div className="mb-4 text-center">
-        <b className="text-2xl font-semibold text-fg">Criar conta</b>
+      <div className="mb-5 flex flex-col items-center text-center">
+        <span className="mb-2.5 flex h-11 w-11 items-center justify-center rounded-xl bg-accent text-base font-bold text-white">GE</span>
+        <b className="text-xl font-bold text-fg">Criar conta</b>
         <p className="mt-1 text-xs text-muted">GEIE - Gestao de Espacos Escolar</p>
       </div>
       <div className="w-full max-w-xs">

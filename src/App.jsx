@@ -13,15 +13,15 @@ import Mapa from './pages/Mapa.jsx'
 
 const ALL = ['professor', 'aluno', 'coordenador']
 const NAV = [
-  { to: '/', label: 'Inicio', end: true, roles: ALL },
+  { to: '/', label: 'Inicio', ic: '◧', end: true, roles: ALL },
   { g: 'Operacoes' },
-  { to: '/buscar', label: 'Buscar sala', roles: ['professor', 'coordenador'] },
-  { to: '/agendar', label: 'Novo agendamento', roles: ALL },
-  { to: '/localizar', label: 'Localizar sala', roles: ALL },
-  { to: '/mapa', label: 'Mapa do campus', roles: ALL },
+  { to: '/buscar', label: 'Buscar sala', ic: '🔍', roles: ['professor', 'coordenador'] },
+  { to: '/agendar', label: 'Novo agendamento', ic: '🗓', roles: ALL },
+  { to: '/localizar', label: 'Localizar sala', ic: '📍', roles: ALL },
+  { to: '/mapa', label: 'Mapa do campus', ic: '🗺', roles: ALL },
   { g: 'Gestao' },
-  { to: '/agendamentos', label: 'Minhas reservas', roles: ALL },
-  { to: '/painel', label: 'Painel de controle', roles: ['coordenador'] },
+  { to: '/agendamentos', label: 'Minhas reservas', ic: '📋', roles: ALL },
+  { to: '/painel', label: 'Painel de controle', ic: '📊', roles: ['coordenador'] },
 ]
 const ACCESS = {
   '/': ALL, '/buscar': ['professor', 'coordenador'], '/agendar': ALL,
@@ -34,54 +34,57 @@ function Guard({ path, children }) {
   return children
 }
 
+const iniciais = (nome = '') => nome.trim().split(/\s+/).slice(0, 2).map((p) => p[0]).join('').toUpperCase() || '?'
+
 function Shell() {
   const { profile, role, sair } = useAuth()
   const itens = NAV.filter((n) => n.g || n.roles.includes(role))
   return (
     <div className="min-h-screen bg-subtle">
-      <header className="sticky top-0 z-20 flex h-14 items-center justify-between border-b border-black/20 bg-header px-5 text-headerfg">
-        <div className="flex items-baseline gap-2">
-          <b className="text-base font-semibold tracking-wide text-white">GEIE</b>
-          <span className="hidden text-xs text-headerfg/70 sm:inline">Gestao de Espacos e Infraestrutura Escolar</span>
-        </div>
-        <div className="flex items-center gap-3">
-          <div className="text-right text-xs leading-tight">
-            <b className="block text-white">{profile?.nome}</b>
-            <span className="capitalize text-headerfg/70">{role}</span>
+      <aside className="fixed left-0 top-0 hidden h-screen w-64 flex-col border-r border-line bg-white md:flex">
+        <div className="flex items-center gap-2.5 px-5 py-5">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent text-sm font-bold text-white">GE</span>
+          <div className="leading-tight">
+            <b className="block text-sm font-bold text-fg">GEIE</b>
+            <span className="text-[11px] text-muted">Gestao de Espacos</span>
           </div>
-          <button onClick={sair} className="rounded-md border border-white/25 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/10">Sair</button>
         </div>
-      </header>
-
-      <div className="mx-auto flex max-w-[1400px]">
-        <aside className="sticky top-14 hidden h-[calc(100vh-56px)] w-64 shrink-0 border-r border-line bg-canvas py-4 md:block">
-          <nav className="flex flex-col gap-0.5 px-2">
-            {itens.map((n, i) => n.g ? (
-              <div key={i} className="px-3 pb-1 pt-4 text-[11px] font-semibold uppercase tracking-wide text-muted">{n.g}</div>
-            ) : (
-              <NavLink key={n.to} to={n.to} end={n.end}
-                className={({ isActive }) => 'rounded-md px-3 py-1.5 text-sm ' + (isActive ? 'bg-subtle font-semibold text-fg' : 'text-muted hover:bg-subtle hover:text-fg')}>
-                {n.label}
-              </NavLink>
-            ))}
-          </nav>
-        </aside>
-
-        <main className="min-h-[calc(100vh-56px)] flex-1 bg-subtle px-8 py-6">
-          <div className="w-full">
-            <Routes>
-              <Route path="/" element={<Inicio />} />
-              <Route path="/buscar" element={<Guard path="/buscar"><Buscar /></Guard>} />
-              <Route path="/agendar" element={<Agendar />} />
-              <Route path="/localizar" element={<Localizar />} />
-              <Route path="/painel" element={<Guard path="/painel"><Painel /></Guard>} />
-              <Route path="/agendamentos" element={<Agendamentos />} />
-              <Route path="/mapa" element={<Mapa />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
+        <nav className="flex flex-1 flex-col gap-0.5 overflow-y-auto px-3 py-2">
+          {itens.map((n, i) => n.g ? (
+            <div key={i} className="px-3 pb-1 pt-4 text-[11px] font-semibold uppercase tracking-wide text-muted/70">{n.g}</div>
+          ) : (
+            <NavLink key={n.to} to={n.to} end={n.end}
+              className={({ isActive }) => 'flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition ' + (isActive ? 'bg-accentsoft font-semibold text-accent' : 'text-muted hover:bg-subtle hover:text-fg')}>
+              <span className="w-4 text-center text-[13px]">{n.ic}</span>{n.label}
+            </NavLink>
+          ))}
+        </nav>
+        <div className="border-t border-line p-3">
+          <div className="flex items-center gap-2.5 rounded-lg px-2 py-2">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accentsoft text-xs font-bold text-accent">{iniciais(profile?.nome)}</span>
+            <div className="min-w-0 flex-1 leading-tight">
+              <b className="block truncate text-sm text-fg">{profile?.nome}</b>
+              <span className="text-[11px] capitalize text-muted">{role}</span>
+            </div>
           </div>
-        </main>
-      </div>
+          <button onClick={sair} className="btn mt-2 w-full">Sair</button>
+        </div>
+      </aside>
+
+      <main className="md:ml-64">
+        <div className="mx-auto max-w-[1180px] px-6 py-8 sm:px-8">
+          <Routes>
+            <Route path="/" element={<Inicio />} />
+            <Route path="/buscar" element={<Guard path="/buscar"><Buscar /></Guard>} />
+            <Route path="/agendar" element={<Agendar />} />
+            <Route path="/localizar" element={<Localizar />} />
+            <Route path="/painel" element={<Guard path="/painel"><Painel /></Guard>} />
+            <Route path="/agendamentos" element={<Agendamentos />} />
+            <Route path="/mapa" element={<Mapa />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </div>
+      </main>
     </div>
   )
 }

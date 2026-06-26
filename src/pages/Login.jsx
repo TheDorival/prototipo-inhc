@@ -17,8 +17,9 @@ export default function Login() {
   }
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-subtle px-4">
-      <div className="mb-4 text-center">
-        <b className="text-2xl font-semibold text-fg">GEIE</b>
+      <div className="mb-5 flex flex-col items-center text-center">
+        <span className="mb-2.5 flex h-11 w-11 items-center justify-center rounded-xl bg-accent text-base font-bold text-white">GE</span>
+        <b className="text-xl font-bold text-fg">GEIE</b>
         <p className="mt-1 text-xs text-muted">Gestao de Espacos e Infraestrutura Escolar</p>
       </div>
       <div className="w-full max-w-xs">
