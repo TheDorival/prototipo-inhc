@@ -1,8 +1,8 @@
 # GEIE - Gestao de Espacos e Infraestrutura Escolar
 
-Aplicacao web funcional (React + Vite + Tailwind) com autenticacao e banco de
-dados reais via Firebase. Cobre os 4 cenarios das proto-personas do documento,
-com reservas por usuario e papel, salvas em tempo real no Firestore.
+Aplicacao web para gestao de espacos e infraestrutura escolar, feita com
+React + Vite + Tailwind e Firebase (Auth + Firestore). Interface no estilo
+GitHub (Primer), com reservas por usuario e papel salvas em tempo real.
 
 ## Stack
 

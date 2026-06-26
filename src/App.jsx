@@ -1,4 +1,4 @@
-import { NavLink, Navigate, Route, Routes, useLocation } from 'react-router-dom'
+import { NavLink, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider, useAuth } from './auth.jsx'
 import { StoreProvider } from './store.jsx'
 import Login from './pages/Login.jsx'
@@ -13,25 +13,16 @@ import Mapa from './pages/Mapa.jsx'
 
 const ALL = ['professor', 'aluno', 'coordenador']
 const NAV = [
-  { to: '/', label: 'Inicio', ic: '■', end: true, roles: ALL },
-  { g: 'Cenarios' },
-  { to: '/buscar', label: 'Buscar Sala Agora', ic: '🔍', roles: ['professor', 'coordenador'] },
-  { to: '/agendar', label: 'Novo Agendamento', ic: '📅', roles: ALL },
-  { to: '/localizar', label: 'Buscar Salas Ocupadas', ic: '📍', roles: ALL },
-  { to: '/painel', label: 'Painel de Controle', ic: '📊', roles: ['coordenador'] },
-  { g: 'Geral' },
-  { to: '/agendamentos', label: 'Minhas Reservas', ic: '📋', roles: ALL },
-  { to: '/mapa', label: 'Mapa do Campus', ic: '🗺', roles: ALL },
+  { to: '/', label: 'Inicio', end: true, roles: ALL },
+  { g: 'Operacoes' },
+  { to: '/buscar', label: 'Buscar sala', roles: ['professor', 'coordenador'] },
+  { to: '/agendar', label: 'Novo agendamento', roles: ALL },
+  { to: '/localizar', label: 'Localizar sala', roles: ALL },
+  { to: '/mapa', label: 'Mapa do campus', roles: ALL },
+  { g: 'Gestao' },
+  { to: '/agendamentos', label: 'Minhas reservas', roles: ALL },
+  { to: '/painel', label: 'Painel de controle', roles: ['coordenador'] },
 ]
-const META = {
-  '/': { t: 'Inicio', p: '' },
-  '/buscar': { t: 'Buscar Sala Agora', p: 'Cenario 1 · Augusto Carlos · Professor' },
-  '/agendar': { t: 'Novo Agendamento', p: 'Cenario 2 · Ana Lima · Coord. de extensao' },
-  '/localizar': { t: 'Buscar Salas Ocupadas', p: 'Cenario 4 · Gabriela Ciresi · Discente' },
-  '/painel': { t: 'Painel de Controle', p: 'Cenario 3 · Marcos Ramos · Coordenador' },
-  '/agendamentos': { t: 'Minhas Reservas', p: '' },
-  '/mapa': { t: 'Mapa do Campus', p: '' },
-}
 const ACCESS = {
   '/': ALL, '/buscar': ['professor', 'coordenador'], '/agendar': ALL,
   '/localizar': ALL, '/painel': ['coordenador'], '/agendamentos': ALL, '/mapa': ALL,
@@ -44,49 +35,51 @@ function Guard({ path, children }) {
 }
 
 function Shell() {
-  const { pathname } = useLocation()
   const { profile, role, sair } = useAuth()
-  const meta = META[pathname] || META['/']
   const itens = NAV.filter((n) => n.g || n.roles.includes(role))
   return (
-    <div className="flex">
-      <aside className="fixed left-0 top-0 flex min-h-screen w-60 flex-col bg-azul py-5 text-white">
-        <div className="mb-2.5 border-b border-white/15 px-5 pb-4">
-          <b className="text-lg tracking-wide">GEIE</b>
-          <small className="mt-0.5 block text-[11px] opacity-80">Gestao de Espacos e Infraestrutura Escolar</small>
+    <div className="min-h-screen bg-subtle">
+      <header className="sticky top-0 z-20 flex h-14 items-center justify-between border-b border-black/20 bg-header px-5 text-headerfg">
+        <div className="flex items-baseline gap-2">
+          <b className="text-base font-semibold tracking-wide text-white">GEIE</b>
+          <span className="hidden text-xs text-headerfg/70 sm:inline">Gestao de Espacos e Infraestrutura Escolar</span>
         </div>
-        <nav className="flex flex-col">
-          {itens.map((n, i) => n.g ? (
-            <div key={i} className="px-5 pb-1.5 pt-3.5 text-[10px] uppercase tracking-wider opacity-60">{n.g}</div>
-          ) : (
-            <NavLink key={n.to} to={n.to} end={n.end}
-              className={({ isActive }) => 'flex items-center gap-3 border-l-[3px] px-5 py-2.5 text-sm ' + (isActive ? 'border-white bg-white/15 font-semibold text-white' : 'border-transparent text-[#dbe6f6] hover:bg-white/10')}>
-              <span className="w-5 text-center text-[15px]">{n.ic}</span>{n.label}
-            </NavLink>
-          ))}
-        </nav>
-        <div className="mt-auto px-5 pt-4">
-          <div className="mb-2 text-[11px] text-[#dbe6f6]"><b className="block text-white">{profile?.nome}</b><span className="capitalize opacity-80">{role}</span></div>
-          <button onClick={sair} className="w-full rounded-lg border border-white/25 py-2 text-xs font-semibold text-white hover:bg-white/10">Sair</button>
+        <div className="flex items-center gap-3">
+          <div className="text-right text-xs leading-tight">
+            <b className="block text-white">{profile?.nome}</b>
+            <span className="capitalize text-headerfg/70">{role}</span>
+          </div>
+          <button onClick={sair} className="rounded-md border border-white/25 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/10">Sair</button>
         </div>
-      </aside>
+      </header>
 
-      <div className="ml-60 min-h-screen flex-1">
-        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-borda bg-white px-7 py-3.5">
-          <h1 className="text-lg font-semibold text-azul">{meta.t}</h1>
-          <div className="text-right text-xs text-muted">{meta.p}</div>
-        </div>
-        <main className="mx-auto max-w-[1500px] p-7">
-          <Routes>
-            <Route path="/" element={<Inicio />} />
-            <Route path="/buscar" element={<Guard path="/buscar"><Buscar /></Guard>} />
-            <Route path="/agendar" element={<Agendar />} />
-            <Route path="/localizar" element={<Localizar />} />
-            <Route path="/painel" element={<Guard path="/painel"><Painel /></Guard>} />
-            <Route path="/agendamentos" element={<Agendamentos />} />
-            <Route path="/mapa" element={<Mapa />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
+      <div className="mx-auto flex max-w-[1280px]">
+        <aside className="sticky top-14 hidden h-[calc(100vh-56px)] w-60 shrink-0 border-r border-line bg-canvas py-4 md:block">
+          <nav className="flex flex-col gap-0.5 px-2">
+            {itens.map((n, i) => n.g ? (
+              <div key={i} className="px-3 pb-1 pt-4 text-[11px] font-semibold uppercase tracking-wide text-muted">{n.g}</div>
+            ) : (
+              <NavLink key={n.to} to={n.to} end={n.end}
+                className={({ isActive }) => 'rounded-md px-3 py-1.5 text-sm ' + (isActive ? 'bg-subtle font-semibold text-fg' : 'text-muted hover:bg-subtle hover:text-fg')}>
+                {n.label}
+              </NavLink>
+            ))}
+          </nav>
+        </aside>
+
+        <main className="min-h-[calc(100vh-56px)] flex-1 bg-subtle p-6">
+          <div className="mx-auto max-w-4xl">
+            <Routes>
+              <Route path="/" element={<Inicio />} />
+              <Route path="/buscar" element={<Guard path="/buscar"><Buscar /></Guard>} />
+              <Route path="/agendar" element={<Agendar />} />
+              <Route path="/localizar" element={<Localizar />} />
+              <Route path="/painel" element={<Guard path="/painel"><Painel /></Guard>} />
+              <Route path="/agendamentos" element={<Agendamentos />} />
+              <Route path="/mapa" element={<Mapa />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </div>
         </main>
       </div>
     </div>

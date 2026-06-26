@@ -2,4 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
-body { background: #eef1f6; color: #1f2733; font-family: 'Segoe UI', system-ui, Arial, sans-serif; }
+body {
+  background: #ffffff;
+  color: #1f2328;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+  font-size: 14px;
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-md border border-line bg-subtle px-3 py-1.5 text-sm font-semibold text-fg transition hover:bg-inset disabled:opacity-60 disabled:cursor-not-allowed;
+  }
+  .btn-primary {
+    @apply border-[#1f883d] bg-green text-white hover:bg-greenh;
+  }
+  .btn-danger {
+    @apply text-danger hover:border-danger hover:bg-danger hover:text-white;
+  }
+  .input {
+    @apply w-full rounded-md border border-line bg-canvas px-3 py-1.5 text-sm text-fg placeholder:text-muted focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30;
+  }
+  .lbl { @apply mb-1 block text-xs font-semibold text-fg; }
+  .card { @apply rounded-md border border-line bg-canvas; }
+}
