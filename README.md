@@ -56,6 +56,31 @@ npm run preview  # serve o build
 No primeiro acesso autenticado, o sistema semeia automaticamente as salas e
 algumas reservas de exemplo (incluindo o conflito do auditorio para o painel).
 
+## Deploy (Firebase Hosting)
+
+O projeto ja vem configurado para publicar no Firebase Hosting
+(`firebase.json`, `.firebaserc` apontando para `geie-gestao-espacos`
+e `firestore.rules`).
+
+Pre-requisitos: ter o `.env` preenchido e o Firebase CLI instalado.
+
+```bash
+npm install -g firebase-tools   # uma vez
+firebase login                  # autentica na sua conta Google/Firebase
+
+npm run build                   # gera a pasta dist com o .env atual
+firebase deploy                 # publica hosting + regras do Firestore
+```
+
+Ao final, o terminal mostra a URL publica (algo como
+https://geie-gestao-espacos.web.app). Para publicar so o site ou so as
+regras: `firebase deploy --only hosting` ou `firebase deploy --only firestore:rules`.
+
+Observacao: as chaves `VITE_FIREBASE_*` sao embutidas no build (sao chaves
+de cliente, seguras para exposicao). Garanta que o dominio do Hosting esteja
+em Authentication > Settings > Authorized domains (os dominios .web.app e
+.firebaseapp.com ja entram automaticamente).
+
 ## Estrutura
 
 ```
