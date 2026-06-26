@@ -12,8 +12,8 @@ export default function Agendar() {
   const [ok, setOk] = useState(null)
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }))
 
-  const confirmar = () => {
-    agendar({ sala, data: form.data, inicio: form.inicio, fim: form.fim, just: form.just })
+  const confirmar = async () => {
+    await agendar({ sala, data: form.data, inicio: form.inicio, fim: form.fim, just: form.just })
     setOk({ sala, ...form }); setSala(null)
   }
   const baixar = () => download('comprovante_agendamento.txt',

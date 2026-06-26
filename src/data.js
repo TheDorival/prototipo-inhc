@@ -13,17 +13,18 @@ export const ROOMS_INIT = [
   { id: 'Aud-P', bloco: 'B', cap: 120, cat: 'Auditorio', equip: ['Projetor', 'Ar-condicionado'], status: 'reservada', sensor: 'vazio' },
 ]
 
-export const APPTS_INIT = [
-  { sala: 'D-110', data: '2026-06-25', inicio: '18:50', fim: '20:30', just: 'Aula SI-302 Fisica (realocada)', persona: 'Coordenacao' },
-  { sala: 'Aud-P', data: '2026-06-26', inicio: '14:00', fim: '16:00', just: 'Palestra - Prof. Souza', persona: 'Prof. Souza' },
-  { sala: 'Aud-P', data: '2026-06-26', inicio: '14:00', fim: '16:00', just: 'Defesa de TCC - Prof. Andrade', persona: 'Prof. Andrade' },
+// reservas de exemplo (semeadas uma unica vez) para ilustrar o conflito do painel
+export const SEED_RESERVAS = [
+  { sala: 'D-110', data: '2026-06-25', inicio: '18:50', fim: '20:30', just: 'Aula SI-302 Fisica (realocada)', persona: 'Coordenacao', uid: 'seed', role: 'coordenador' },
+  { sala: 'Aud-P', data: '2026-06-26', inicio: '14:00', fim: '16:00', just: 'Palestra - Prof. Souza', persona: 'Prof. Souza', uid: 'seed', role: 'professor' },
+  { sala: 'Aud-P', data: '2026-06-26', inicio: '14:00', fim: '16:00', just: 'Defesa de TCC - Prof. Andrade', persona: 'Prof. Andrade', uid: 'seed', role: 'professor' },
 ]
 
 export const DISCIPLINAS = { 'SI-302': 'D-110', 'SI-104': 'B-110', 'SI-210': 'Lab-07' }
 
-export function detectConflitos(appts) {
+export function detectConflitos(reservas) {
   const map = {}
-  appts.forEach((a) => { const k = a.sala + '|' + a.data + '|' + a.inicio; (map[k] = map[k] || []).push(a) })
+  reservas.forEach((a) => { const k = a.sala + '|' + a.data + '|' + a.inicio; (map[k] = map[k] || []).push(a) })
   return Object.values(map).filter((g) => g.length > 1)
 }
 

@@ -1,51 +1,77 @@
 # GEIE - Gestao de Espacos e Infraestrutura Escolar
 
-Prototipo navegavel (site desktop) da atividade de Interacao Humano-Computador,
-feito com React + Vite + Tailwind CSS. Cobre os 4 cenarios das proto-personas
-do documento, com estado conectado entre as telas.
+Aplicacao web funcional (React + Vite + Tailwind) com autenticacao e banco de
+dados reais via Firebase. Cobre os 4 cenarios das proto-personas do documento,
+com reservas por usuario e papel, salvas em tempo real no Firestore.
 
 ## Stack
 
-- React 18
-- Vite 5
+- React 18 + Vite 5
 - Tailwind CSS 3
 - React Router (HashRouter)
+- Firebase Authentication (e-mail/senha)
+- Cloud Firestore (banco em tempo real)
+
+## Funcionalidades
+
+- Cadastro e login de usuarios com papel (professor, aluno, coordenador)
+- Rotas protegidas e navegacao filtrada por papel
+- Buscar e reservar sala na hora (com QR Code) - professor/coordenador
+- Novo agendamento pelo mapa do campus + comprovante .txt
+- Localizar a sala de uma disciplina e ver a rota
+- Painel do coordenador: ocupacao em tempo real, resolucao de conflitos e
+  exportacao de relatorio
+- Salas e reservas persistem no Firestore e atualizam ao vivo entre telas/usuarios
+
+## Configuracao do Firebase (obrigatorio)
+
+1. Crie um projeto em https://console.firebase.google.com
+2. Em "Authentication" > "Sign-in method", habilite **E-mail/senha**
+3. Em "Firestore Database", crie o banco (modo de teste para comecar)
+4. Em "Configuracoes do projeto" > "Seus apps" (Web), copie as chaves do SDK
+5. Copie `.env.example` para `.env` e preencha as variaveis `VITE_FIREBASE_*`
+
+Regras minimas do Firestore para desenvolvimento (Console > Firestore > Regras):
+
+```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}
+```
 
 ## Como rodar
 
 ```bash
 npm install
-npm run dev      # ambiente de desenvolvimento
+npm run dev      # desenvolvimento
 npm run build    # build de producao (pasta dist)
 npm run preview  # serve o build
 ```
+
+No primeiro acesso autenticado, o sistema semeia automaticamente as salas e
+algumas reservas de exemplo (incluindo o conflito do auditorio para o painel).
 
 ## Estrutura
 
 ```
 src/
-  main.jsx        entrada da aplicacao
-  App.jsx         layout (sidebar, topbar) e rotas
-  store.jsx       estado compartilhado e acoes (Context)
-  data.js         salas, agendamentos, disciplinas e utilitarios
-  ui.jsx          componentes reutilizaveis (Card, Kpi, Tag, mapa)
-  pages/          uma pagina por rota
+  main.jsx        entrada
+  App.jsx         layout, rotas e protecao por papel
+  auth.jsx        AuthProvider (login, cadastro, logout)
+  firebase.js     inicializacao do Firebase (le do .env)
+  store.jsx       dados em tempo real e acoes (Firestore)
+  data.js         seed de salas/reservas e utilitarios
+  ui.jsx          componentes reutilizaveis
+  pages/          Login, Cadastro e as paginas dos cenarios
 ```
 
-O estado fica em memoria via Context: reservar uma sala em "Buscar Sala Agora"
-deixa a sala ocupada no mapa da Ana e no painel do Marcos automaticamente.
+## Papeis e acesso
 
-## Cenarios cobertos
-
-1. Buscar Sala Agora (Augusto Carlos, 42 - Professor): filtros rapidos,
-   reserva imediata e QR Code de acesso.
-2. Novo Agendamento (Ana Lima, 22 - Coord. de extensao): data/hora, categoria,
-   mapa visual do campus, comprovante em .txt.
-3. Painel de Controle (Marcos Ramos, 51 - Coord. administrativo): ocupacao em
-   tempo real, alerta de conflito com resolucao automatica e relatorio de ociosidade.
-4. Buscar Salas Ocupadas (Gabriela Ciresi, 19 - Discente de SI): busca por
-   disciplina e rota ate a sala realocada.
-
-## Observacao
-
-Dados simulados, foco em demonstrar os fluxos. Prototipo de apresentacao.
+- Professor: buscar/reservar, agendar, localizar, suas reservas, mapa
+- Aluno: agendar, localizar, suas reservas, mapa
+- Coordenador: tudo acima + Painel de Controle (ve todas as reservas)

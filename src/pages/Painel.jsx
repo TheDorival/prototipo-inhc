@@ -5,11 +5,11 @@ import { Card, Kpi } from '../ui.jsx'
 const badge = { livre: 'bg-verdebg text-verde', reservada: 'bg-amarelobg text-[#a87c00]', ocupada: 'bg-vermelhobg text-vermelho' }
 
 export default function Painel() {
-  const { rooms, appts, liberarSala, resolverConflito } = useStore()
+  const { rooms, reservas, liberarSala, resolverConflito } = useStore()
   const emUso = rooms.filter((r) => r.status !== 'livre').length
   const ocup = Math.round((emUso / rooms.length) * 100)
   const ocios = rooms.filter((r) => r.status !== 'livre' && r.sensor === 'vazio')
-  const conflitos = detectConflitos(appts)
+  const conflitos = detectConflitos(reservas)
 
   const exportar = () => download('relatorio_ociosidade.txt',
     `RELATORIO MENSAL DE OCIOSIDADE - GEIE\nGerado em: ${new Date().toLocaleString('pt-BR')}\n\nOcupacao por sala (sala;categoria;status;sensor):\n` +
@@ -24,7 +24,7 @@ export default function Painel() {
         <Kpi value={ocup + '%'} label="Ocupacao agora" />
         <Kpi value={emUso} label="Salas em uso/reservadas" />
         <Kpi value={ocios.length + conflitos.length} label="Alertas ativos" />
-        <Kpi value={appts.length} label="Agendamentos" />
+        <Kpi value={reservas.length} label="Agendamentos" />
       </div>
       <div className="grid grid-cols-2 gap-4">
         <Card title="Alertas em tempo real">
