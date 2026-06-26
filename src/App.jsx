@@ -72,7 +72,7 @@ function Shell() {
       </aside>
 
       <main className="md:ml-64">
-        <div className="mx-auto max-w-[1180px] px-6 py-8 sm:px-8">
+        <div className="mx-auto max-w-[1500px] px-6 py-8 sm:px-8">
           <Routes>
             <Route path="/" element={<Inicio />} />
             <Route path="/buscar" element={<Guard path="/buscar"><Buscar /></Guard>} />
