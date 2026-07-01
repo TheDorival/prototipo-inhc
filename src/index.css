@@ -1,27 +1,64 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --c-canvas: 255 255 255;
+  --c-subtle: 241 245 249;
+  --c-inset: 226 232 240;
+  --c-line: 229 231 235;
+  --c-fg: 30 41 59;
+  --c-muted: 100 116 139;
+  --c-accent: 79 70 229;
+  --c-accentemph: 67 56 202;
+  --c-accentsoft: 238 242 255;
+  --c-green: 22 163 74;
+  --c-greenh: 21 128 61;
+  --c-danger: 220 38 38;
+  --c-dangerbg: 254 226 226;
+  --c-warn: 217 119 6;
+  --c-warnbg: 254 243 199;
+  --c-okfg: 21 128 61;
+  --c-okbg: 220 252 231;
+}
+
+.dark {
+  --c-canvas: 30 41 59;
+  --c-subtle: 15 23 42;
+  --c-inset: 51 65 85;
+  --c-line: 51 65 85;
+  --c-fg: 226 232 240;
+  --c-muted: 148 163 184;
+  --c-accent: 99 102 241;
+  --c-accentemph: 129 140 248;
+  --c-accentsoft: 49 46 129;
+  --c-green: 34 197 94;
+  --c-greenh: 74 222 128;
+  --c-danger: 248 113 113;
+  --c-dangerbg: 76 20 20;
+  --c-warn: 245 158 11;
+  --c-warnbg: 69 47 12;
+  --c-okfg: 134 239 172;
+  --c-okbg: 20 60 40;
+}
+
 body {
-  background: #f1f5f9;
-  color: #1e293b;
+  background: rgb(var(--c-subtle));
+  color: rgb(var(--c-fg));
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   font-size: 14px;
 }
 
 @layer components {
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-line bg-white px-3.5 py-2 text-sm font-medium text-fg shadow-soft transition hover:bg-subtle disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-line bg-canvas px-3.5 py-2 text-sm font-medium text-fg shadow-soft transition hover:bg-subtle disabled:opacity-50 disabled:cursor-not-allowed;
   }
-  .btn-primary {
-    @apply border-transparent bg-accent text-white hover:bg-accentemph;
-  }
-  .btn-danger {
-    @apply border-danger/30 text-danger hover:bg-danger hover:text-white;
-  }
+  .btn-primary { @apply border-transparent bg-accent text-white hover:bg-accentemph; }
+  .btn-danger { @apply border-danger/30 text-danger hover:bg-danger hover:text-white; }
   .input {
-    @apply w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-fg placeholder:text-muted focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/25;
+    @apply w-full rounded-lg border border-line bg-canvas px-3 py-2 text-sm text-fg placeholder:text-muted focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/25;
   }
   .lbl { @apply mb-1 block text-xs font-medium text-muted; }
-  .card { @apply rounded-xl border border-line bg-white shadow-card; }
+  .card { @apply rounded-xl border border-line bg-canvas shadow-card; }
 }
