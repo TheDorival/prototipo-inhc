@@ -19,8 +19,8 @@ export default function Inicio() {
   return (
     <>
       <div className="card mb-5 p-5">
-        <h2 className="text-xl font-semibold text-fg">Bem-vindo, {profile?.nome || 'usuario'}</h2>
-        <p className="mt-1 text-sm text-muted">Voce esta conectado como <b className="capitalize text-fg">{role}</b>. Gerencie salas e reservas do campus em tempo real.</p>
+        <h2 className="text-xl font-semibold text-fg">Bem-vindo, <span className="capitalize">{role}</span> {profile?.nome || 'usuario'}</h2>
+        <p className="mt-1 text-sm text-muted">Pesquise, gerencie e reserve salas do campus em tempo real.</p>
       </div>
       <div className="mb-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
         <Kpi value={rooms.length} label="Salas cadastradas" />
