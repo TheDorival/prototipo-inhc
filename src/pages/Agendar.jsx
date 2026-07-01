@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import {
   FileDown, CheckCircle2, Search, Lock, AlertTriangle, Users,
   Projector, Plug, Snowflake, Monitor, Presentation,
@@ -19,8 +19,9 @@ const EQUIP_ICON = {
 export default function Agendar() {
   const { rooms, agendar } = useStore()
   const nav = useNavigate()
+  const location = useLocation()
   const [form, setForm] = useState({ data: '2026-06-26', inicio: '14:00', fim: '16:00', cat: 'Sala de Reuniao/Estudo', just: '' })
-  const [sala, setSala] = useState(null)
+  const [sala, setSala] = useState(location.state?.sala ?? null)
   const [busca, setBusca] = useState('')
   const [ok, setOk] = useState(null)
   const [erro, setErro] = useState('')

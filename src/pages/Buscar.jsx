@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { CheckCircle2, Check } from 'lucide-react'
+import { Check } from 'lucide-react'
 import { useStore } from '../store.jsx'
 import { Card, Tag, PageHead } from '../ui.jsx'
 
@@ -13,11 +13,10 @@ const FILTROS = [
 const padrao = () => Object.fromEntries(FILTROS.map((x) => [x.f, x.on]))
 
 export default function Buscar() {
-  const { rooms, reservarAgora } = useStore()
+  const { rooms } = useStore()
   const nav = useNavigate()
   const [sel, setSel] = useState(padrao)
   const [applied, setApplied] = useState(padrao)
-  const [reservada, setReservada] = useState(null)
 
   const res = useMemo(() => {
     const cap = applied.cap
@@ -25,12 +24,12 @@ export default function Buscar() {
     return rooms.filter((r) => r.status === 'livre' && (!cap || r.cap >= 40) && equip.every((e) => r.equip.includes(e)))
   }, [rooms, applied])
 
-  const buscar = () => { setApplied({ ...sel }); setReservada(null) }
-  const reservar = async (id) => { const r = await reservarAgora(id); if (r.ok) setReservada({ id, hora: r.hora }) }
+  const buscar = () => setApplied({ ...sel })
+  const reservar = (id) => nav('/agendar', { state: { sala: id } })
 
   return (
     <>
-      <PageHead title="Buscar sala disponivel" sub="Filtre por capacidade e equipamentos e reserve uma sala livre imediatamente." />
+      <PageHead title="Buscar sala disponivel" sub="Filtre por capacidade e equipamentos e reserve uma sala livre no novo agendamento." />
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <div className="lg:col-span-1">
           <Card title="Filtros">
@@ -46,37 +45,22 @@ export default function Buscar() {
         </div>
 
         <div className="lg:col-span-2">
-          {reservada ? (
-            <Card title="Reserva confirmada">
-              <div className="flex flex-col items-center text-center">
-                <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-okbg text-okfg"><CheckCircle2 size={30} /></div>
-                <p className="max-w-md text-sm text-muted">Reserva de <b className="text-fg">{reservada.id}</b> aprovada. A seguranca foi notificada para liberar a porta. Use o QR Code para acessar a sala.</p>
-                <div className="my-4 h-36 w-36 rounded border-[8px] border-fg" style={{ background: 'conic-gradient(#000 25%,#fff 0 50%,#000 0 75%,#fff 0)' }} />
-                <p className="text-sm text-muted">{reservada.id} · valido a partir das {reservada.hora}</p>
-                <div className="mt-4 flex gap-2.5">
-                  <button onClick={() => nav('/painel')} className="btn">Ver no painel</button>
-                  <button onClick={() => setReservada(null)} className="btn btn-primary">Nova busca</button>
-                </div>
-              </div>
-            </Card>
-          ) : (
-            <Card title={res.length + ' sala(s) disponivel(is)'}>
-              {rooms.length === 0 && <div className="py-6 text-center text-sm text-muted">Carregando salas...</div>}
-              {rooms.length > 0 && res.length === 0 && <div className="py-6 text-center text-sm text-muted">Nenhuma sala livre com esses filtros. Ajuste os filtros e busque novamente.</div>}
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                {res.map((r, i) => (
-                  <div key={r.id} className="flex items-center justify-between gap-3 rounded-lg border border-line p-3">
-                    <div className="min-w-0">
-                      <b className="text-sm font-semibold">{r.id} <Tag status="livre" /></b>
-                      <small className="mt-0.5 block text-xs text-muted">{r.cat} · Bloco {r.bloco} · cap. {r.cap}</small>
-                      <div className="mt-1 truncate text-[11px] text-muted">{r.equip.join(' · ')}</div>
-                    </div>
-                    <button onClick={() => reservar(r.id)} className="btn btn-primary shrink-0">Reservar</button>
+          <Card title={res.length + ' sala(s) disponivel(is)'}>
+            {rooms.length === 0 && <div className="py-6 text-center text-sm text-muted">Carregando salas...</div>}
+            {rooms.length > 0 && res.length === 0 && <div className="py-6 text-center text-sm text-muted">Nenhuma sala livre com esses filtros. Ajuste os filtros e busque novamente.</div>}
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {res.map((r, i) => (
+                <div key={r.id} className="flex items-center justify-between gap-3 rounded-lg border border-line p-3">
+                  <div className="min-w-0">
+                    <b className="text-sm font-semibold">{r.id} <Tag status="livre" /></b>
+                    <small className="mt-0.5 block text-xs text-muted">{r.cat} · Bloco {r.bloco} · cap. {r.cap}</small>
+                    <div className="mt-1 truncate text-[11px] text-muted">{r.equip.join(' · ')}</div>
                   </div>
-                ))}
-              </div>
-            </Card>
-          )}
+                  <button onClick={() => reservar(r.id)} className="btn btn-primary shrink-0">Reservar</button>
+                </div>
+              ))}
+            </div>
+          </Card>
         </div>
       </div>
     </>

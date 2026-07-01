@@ -56,20 +56,6 @@ export function StoreProvider({ children }) {
 
   const setRoom = (id, patch) => updateDoc(doc(db, 'rooms', id), patch)
 
-  const reservarAgora = async (id) => {
-    try {
-      const hora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
-      await setRoom(id, { status: 'ocupada', sensor: 'presenca' })
-      await addDoc(collection(db, 'reservas'), {
-        sala: id, data: new Date().toISOString().slice(0, 10), inicio: hora, fim: '20:30',
-        just: 'Reserva imediata - aula', persona: profile?.nome || 'Professor', uid: user.uid, role,
-        tipo: 'imediata', createdAt: Date.now(),
-      })
-      notify('Sala ' + id + ' reservada. Visivel no painel e no mapa.')
-      return { ok: true, hora }
-    } catch (e) { notify('Erro ao reservar a sala.'); return { ok: false } }
-  }
-
   const agendar = async ({ sala, data, inicio, fim, just }) => {
     if (fim <= inicio) return { ok: false, erro: 'O termino deve ser depois do inicio.' }
     try {
@@ -145,7 +131,7 @@ export function StoreProvider({ children }) {
   return (
     <Ctx.Provider value={{
       rooms, reservas, toast, notify,
-      reservarAgora, agendar, cancelarReserva, editarReserva,
+      agendar, cancelarReserva, editarReserva,
       liberarSala, resolverConflito, localizar,
       addRoom, updateRoom, removeRoom,
     }}>
