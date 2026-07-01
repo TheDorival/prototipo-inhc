@@ -34,3 +34,10 @@ export function download(nome, texto) {
   a.href = URL.createObjectURL(blob); a.download = nome; a.click()
   URL.revokeObjectURL(a.href)
 }
+
+export const EQUIP = ['Projetor', 'Tomada', 'Ar-condicionado', 'Computadores', 'Quadro']
+export const CATEGORIAS = ['Sala de aula', 'Sala de Reuniao/Estudo', 'Laboratorio', 'Auditorio']
+
+export function horariosSobrepoem(aIni, aFim, bIni, bFim) {
+  return aIni < bFim && bIni < aFim
+}

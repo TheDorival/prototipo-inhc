@@ -10,6 +10,7 @@ import Localizar from './pages/Localizar.jsx'
 import Painel from './pages/Painel.jsx'
 import Agendamentos from './pages/Agendamentos.jsx'
 import Mapa from './pages/Mapa.jsx'
+import AdminSalas from './pages/AdminSalas.jsx'
 
 const ALL = ['professor', 'aluno', 'coordenador']
 const NAV = [
@@ -22,6 +23,7 @@ const NAV = [
   { g: 'Gestao' },
   { to: '/agendamentos', label: 'Minhas reservas', ic: '📋', roles: ALL },
   { to: '/painel', label: 'Painel de controle', ic: '📊', roles: ['coordenador'] },
+  { to: '/admin', label: 'Salas (admin)', ic: '🏫', roles: ['coordenador'] },
 ]
 const ACCESS = {
   '/': ALL, '/buscar': ['professor', 'coordenador'], '/agendar': ALL,
@@ -81,6 +83,7 @@ function Shell() {
             <Route path="/painel" element={<Guard path="/painel"><Painel /></Guard>} />
             <Route path="/agendamentos" element={<Agendamentos />} />
             <Route path="/mapa" element={<Mapa />} />
+            <Route path="/admin" element={<Guard path="/admin"><AdminSalas /></Guard>} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>

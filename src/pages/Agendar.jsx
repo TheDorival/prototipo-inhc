@@ -10,10 +10,13 @@ export default function Agendar() {
   const [form, setForm] = useState({ data: '2026-06-26', inicio: '14:00', fim: '16:00', cat: 'Sala de Reuniao/Estudo', just: '' })
   const [sala, setSala] = useState(null)
   const [ok, setOk] = useState(null)
+  const [erro, setErro] = useState('')
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }))
 
   const confirmar = async () => {
-    await agendar({ sala, data: form.data, inicio: form.inicio, fim: form.fim, just: form.just || 'Agendamento' })
+    setErro('')
+    const res = await agendar({ sala, data: form.data, inicio: form.inicio, fim: form.fim, just: form.just || 'Agendamento' })
+    if (!res.ok) { setErro(res.erro); return }
     setOk({ sala, ...form }); setSala(null)
   }
   const baixar = () => download('comprovante_agendamento.txt',
@@ -43,6 +46,7 @@ export default function Agendar() {
           <div className="mt-4">
             <button disabled={!sala} onClick={confirmar} className="btn btn-primary">Confirmar agendamento</button>
           </div>
+          {erro && <div className="mt-3 rounded-lg border border-danger/30 bg-dangerbg p-3 text-sm text-danger">{erro}</div>}
           {ok && (
             <>
               <div className="mt-3 rounded-md border border-[#1f883d]/30 bg-okbg p-3 text-sm text-okfg"><b className="block">✓ Agendamento confirmado</b>Sala {ok.sala} reservada para {ok.data}, {ok.inicio} as {ok.fim}.</div>

@@ -23,7 +23,7 @@ export default function Buscar() {
     setRes(rooms.filter((r) => r.status === 'livre' && (!cap || r.cap >= 40) && equip.every((e) => r.equip.includes(e))))
     setReservada(null)
   }
-  const reservar = async (id) => { const hora = await reservarAgora(id); setReservada({ id, hora }) }
+  const reservar = async (id) => { const res = await reservarAgora(id); if (res.ok) setReservada({ id, hora: res.hora }) }
 
   return (
     <>

@@ -1,10 +1,32 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Qualquer usuario autenticado pode ler e gravar.
-    // Suficiente para a versao atual; refinar por papel quando necessario.
-    match /{document=**} {
-      allow read, write: if request.auth != null;
+
+    function signedIn() { return request.auth != null; }
+    function papel() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+    function isCoord() { return signedIn() && papel() == 'coordenador'; }
+
+    // Perfis: cada usuario le todos (para exibir nomes) e edita apenas o proprio
+    match /users/{uid} {
+      allow read: if signedIn();
+      allow create, update: if signedIn() && request.auth.uid == uid;
+      allow delete: if false;
+    }
+
+    // Salas: todos os autenticados leem; apenas coordenador altera
+    match /rooms/{id} {
+      allow read: if signedIn();
+      allow write: if isCoord();
+    }
+
+    // Reservas: todos leem (necessario para checar conflitos e o painel);
+    // cria a propria; edita/cancela a propria ou sendo coordenador
+    match /reservas/{rid} {
+      allow read: if signedIn();
+      allow create: if signedIn() && request.resource.data.uid == request.auth.uid;
+      allow update, delete: if signedIn() && (resource.data.uid == request.auth.uid || isCoord());
     }
   }
 }

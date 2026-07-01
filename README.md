@@ -21,6 +21,11 @@ em tempo real.
 - Localizar a sala de uma disciplina e ver a rota
 - Painel do coordenador: ocupacao em tempo real, resolucao de conflitos e
   exportacao de relatorio
+- Cancelar e editar reservas (a sala e liberada ao cancelar)
+- Bloqueio de conflito: impede reservar sala ja ocupada no mesmo horario
+- Tela de administracao de salas (CRUD) para o coordenador
+- Recuperacao de senha no login
+- Regras do Firestore por papel (arquivo firestore.rules)
 - Salas e reservas persistem no Firestore e atualizam ao vivo entre telas/usuarios
 
 ## Configuracao do Firebase (obrigatorio)
@@ -31,7 +36,9 @@ em tempo real.
 4. Em "Configuracoes do projeto" > "Seus apps" (Web), copie as chaves do SDK
 5. Copie `.env.example` para `.env` e preencha as variaveis `VITE_FIREBASE_*`
 
-Regras minimas do Firestore para desenvolvimento (Console > Firestore > Regras):
+As regras de seguranca por papel estao versionadas em `firestore.rules` e sao
+publicadas no deploy. Para colar manualmente no Console (Firestore > Regras),
+use o conteudo desse arquivo. Versao minima de referencia:
 
 ```
 rules_version = '2';
@@ -53,8 +60,9 @@ npm run build    # build de producao (pasta dist)
 npm run preview  # serve o build
 ```
 
-No primeiro acesso autenticado, o sistema semeia automaticamente as salas e
-algumas reservas de exemplo (incluindo o conflito do auditorio para o painel).
+No primeiro acesso de um **coordenador**, o sistema semeia automaticamente as
+salas de exemplo e algumas reservas (incluindo o conflito do auditorio para o
+painel). Depois, use a tela **Salas (admin)** para cadastrar as salas reais.
 
 ## Deploy (Firebase Hosting)
 

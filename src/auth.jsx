@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import {
   createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut,
-  updateProfile, onAuthStateChanged,
+  updateProfile, onAuthStateChanged, sendPasswordResetEmail,
 } from 'firebase/auth'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { auth, db } from './firebase.js'
@@ -50,10 +50,15 @@ export function AuthProvider({ children }) {
     catch (e) { return { ok: false, erro: traduzErro(e.code) } }
   }
 
+  const recuperarSenha = async (email) => {
+    try { await sendPasswordResetEmail(auth, email); return { ok: true } }
+    catch (e) { return { ok: false, erro: traduzErro(e.code) } }
+  }
+
   const sair = () => signOut(auth)
 
   return (
-    <Ctx.Provider value={{ user, profile, role: profile?.role, loading, cadastrar, entrar, sair }}>
+    <Ctx.Provider value={{ user, profile, role: profile?.role, loading, cadastrar, entrar, recuperarSenha, sair }}>
       {children}
     </Ctx.Provider>
   )

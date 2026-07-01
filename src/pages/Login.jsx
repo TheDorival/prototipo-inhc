@@ -4,16 +4,23 @@ import { useAuth } from '../auth.jsx'
 import { firebaseConfigOk } from '../firebase.js'
 
 export default function Login() {
-  const { entrar } = useAuth()
+  const { entrar, recuperarSenha } = useAuth()
   const nav = useNavigate()
   const [f, setF] = useState({ email: '', senha: '' })
   const [erro, setErro] = useState('')
   const [carregando, setCarregando] = useState(false)
+  const [msg, setMsg] = useState('')
   const set = (k) => (e) => setF((s) => ({ ...s, [k]: e.target.value }))
   const submit = async (e) => {
     e.preventDefault(); setErro(''); setCarregando(true)
     const r = await entrar(f); setCarregando(false)
     if (r.ok) nav('/'); else setErro(r.erro)
+  }
+  const recuperar = async () => {
+    setErro(''); setMsg('')
+    if (!f.email) { setErro('Informe o e-mail para recuperar a senha.'); return }
+    const r = await recuperarSenha(f.email)
+    if (r.ok) setMsg('Enviamos um e-mail para redefinir sua senha.'); else setErro(r.erro)
   }
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-subtle px-4">
@@ -31,7 +38,9 @@ export default function Login() {
             <label className="lbl mt-3">Senha</label>
             <input type="password" className="input" value={f.senha} onChange={set('senha')} required />
             {erro && <div className="mt-3 rounded-md border border-danger/30 bg-dangerbg p-2.5 text-xs text-danger">{erro}</div>}
+            {msg && <div className="mt-3 rounded-md border border-green/30 bg-okbg p-2.5 text-xs text-okfg">{msg}</div>}
             <button disabled={carregando} className="btn btn-primary mt-4 w-full">{carregando ? 'Entrando...' : 'Entrar'}</button>
+            <button type="button" onClick={recuperar} className="mt-2 w-full text-center text-xs text-accent hover:underline">Esqueci minha senha</button>
           </form>
         </div>
         <div className="mt-3 rounded-md border border-line bg-canvas p-3 text-center text-sm text-muted">
