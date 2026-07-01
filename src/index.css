@@ -50,6 +50,14 @@ body {
   font-size: 14px;
 }
 
+.theme-transition,
+.theme-transition *,
+.theme-transition *::before,
+.theme-transition *::after {
+  transition: background-color .3s ease, border-color .3s ease, color .3s ease, fill .3s ease, stroke .3s ease !important;
+}
+
+
 @layer components {
   .btn {
     @apply inline-flex items-center justify-center gap-2 rounded-lg border border-line bg-canvas px-3.5 py-2 text-sm font-medium text-fg shadow-soft transition hover:bg-subtle disabled:opacity-50 disabled:cursor-not-allowed;
