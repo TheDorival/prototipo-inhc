@@ -1,9 +1,8 @@
-import { useState } from 'react'
 import { NavLink, Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   LayoutDashboard, Search, CalendarPlus, MapPin, Map, ClipboardList,
-  BarChart3, Building2, LogOut, Sun, Moon,
+  BarChart3, Building2, LogOut,
 } from 'lucide-react'
 import { AuthProvider, useAuth } from './auth.jsx'
 import { StoreProvider } from './store.jsx'
@@ -17,6 +16,7 @@ import Painel from './pages/Painel.jsx'
 import Agendamentos from './pages/Agendamentos.jsx'
 import Mapa from './pages/Mapa.jsx'
 import AdminSalas from './pages/AdminSalas.jsx'
+import Perfil from './pages/Perfil.jsx'
 
 const ALL = ['professor', 'aluno', 'coordenador']
 const NAV = [
@@ -33,7 +33,8 @@ const NAV = [
 ]
 const ACCESS = {
   '/': ALL, '/buscar': ['professor', 'coordenador'], '/agendar': ALL,
-  '/localizar': ALL, '/painel': ['coordenador'], '/agendamentos': ALL, '/mapa': ALL, '/admin': ['coordenador'],
+  '/localizar': ALL, '/painel': ['coordenador'], '/agendamentos': ALL, '/mapa': ALL,
+  '/admin': ['coordenador'], '/perfil': ALL,
 }
 
 function Guard({ path, children }) {
@@ -43,20 +44,6 @@ function Guard({ path, children }) {
 }
 
 const iniciais = (nome = '') => nome.trim().split(/\s+/).slice(0, 2).map((p) => p[0]).join('').toUpperCase() || '?'
-
-function ThemeToggle() {
-  const [dark, setDark] = useState(() => document.documentElement.classList.contains('dark'))
-  const toggle = () => {
-    const n = !dark; setDark(n)
-    document.documentElement.classList.toggle('dark', n)
-    try { localStorage.setItem('theme', n ? 'dark' : 'light') } catch (e) {}
-  }
-  return (
-    <button onClick={toggle} className="btn w-full" aria-label="Alternar tema">
-      {dark ? <Sun size={15} /> : <Moon size={15} />}{dark ? 'Tema claro' : 'Tema escuro'}
-    </button>
-  )
-}
 
 function Shell() {
   const { profile, role, sair } = useAuth()
@@ -83,17 +70,16 @@ function Shell() {
           ))}
         </nav>
         <div className="border-t border-line p-3">
-          <div className="flex items-center gap-2.5 px-2 py-2">
+          <NavLink to="/perfil"
+            className={({ isActive }) => 'flex items-center gap-2.5 rounded-lg px-2 py-2 transition ' + (isActive ? 'bg-accentsoft' : 'hover:bg-subtle')}
+            title="Ver perfil">
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accentsoft text-xs font-bold text-accent">{iniciais(profile?.nome)}</span>
             <div className="min-w-0 flex-1 leading-tight">
               <b className="block truncate text-sm text-fg">{profile?.nome}</b>
               <span className="text-[11px] capitalize text-muted">{role}</span>
             </div>
-          </div>
-          <div className="mt-2 flex flex-col gap-2">
-            <ThemeToggle />
-            <button onClick={sair} className="btn"><LogOut size={15} />Sair</button>
-          </div>
+          </NavLink>
+          <button onClick={sair} className="btn mt-2 w-full"><LogOut size={15} />Sair</button>
         </div>
       </aside>
 
@@ -112,6 +98,7 @@ function Shell() {
                 <Route path="/agendamentos" element={<Agendamentos />} />
                 <Route path="/mapa" element={<Mapa />} />
                 <Route path="/admin" element={<Guard path="/admin"><AdminSalas /></Guard>} />
+                <Route path="/perfil" element={<Perfil />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </motion.div>
