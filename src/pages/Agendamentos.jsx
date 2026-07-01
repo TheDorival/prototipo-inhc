@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { Pencil, Trash2 } from 'lucide-react'
 import { useStore } from '../store.jsx'
 import { useAuth } from '../auth.jsx'
 import { Card, PageHead } from '../ui.jsx'
@@ -65,9 +66,9 @@ export default function Agendamentos() {
                   <td className={td}>{a.persona || '-'}</td>
                   <td className={td}>{a.just}</td>
                   <td className={td}>
-                    <div className="flex gap-2">
-                      <button onClick={() => setEditando(a)} className="text-xs font-semibold text-accent hover:underline">Editar</button>
-                      <button onClick={() => cancelar(a)} className="text-xs font-semibold text-danger hover:underline">Cancelar</button>
+                    <div className="flex items-center gap-2">
+                      <button onClick={() => setEditando(a)} className="btn px-2.5 py-1.5 text-xs"><Pencil size={13} /> Editar</button>
+                      <button onClick={() => cancelar(a)} className="btn btn-danger px-2.5 py-1.5 text-xs"><Trash2 size={13} /> Cancelar</button>
                     </div>
                   </td>
                 </tr>

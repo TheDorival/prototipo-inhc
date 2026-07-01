@@ -37,6 +37,7 @@ export function download(nome, texto) {
 
 export const EQUIP = ['Projetor', 'Tomada', 'Ar-condicionado', 'Computadores', 'Quadro']
 export const CATEGORIAS = ['Sala de aula', 'Sala de Reuniao/Estudo', 'Laboratorio', 'Auditorio']
+export const CATEGORIA_ALUNO = 'Sala de Reuniao/Estudo'
 
 export function horariosSobrepoem(aIni, aFim, bIni, bFim) {
   return aIni < bFim && bIni < aFim

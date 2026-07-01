@@ -5,7 +5,7 @@ import {
 } from 'firebase/firestore'
 import { db } from './firebase.js'
 import { useAuth } from './auth.jsx'
-import { ROOMS_INIT, SEED_RESERVAS, DISCIPLINAS, horariosSobrepoem } from './data.js'
+import { ROOMS_INIT, SEED_RESERVAS, DISCIPLINAS, horariosSobrepoem, CATEGORIA_ALUNO } from './data.js'
 
 const Ctx = createContext(null)
 export const useStore = () => useContext(Ctx)
@@ -58,9 +58,10 @@ export function StoreProvider({ children }) {
 
   const agendar = async ({ sala, data, inicio, fim, just }) => {
     if (fim <= inicio) return { ok: false, erro: 'O termino deve ser depois do inicio.' }
+    const r = rooms.find((x) => x.id === sala)
+    if (role === 'aluno' && r?.cat !== CATEGORIA_ALUNO) return { ok: false, erro: 'Alunos so podem reservar salas de reuniao/estudo.' }
     try {
       if (await salaConflita(sala, data, inicio, fim)) return { ok: false, erro: 'A sala ja esta reservada nesse horario.' }
-      const r = rooms.find((x) => x.id === sala)
       if (r && r.status === 'livre') await setRoom(sala, { status: 'reservada' })
       await addDoc(collection(db, 'reservas'), {
         sala, data, inicio, fim, just, persona: profile?.nome || 'Usuario', uid: user.uid, role,
@@ -136,7 +137,7 @@ export function StoreProvider({ children }) {
       addRoom, updateRoom, removeRoom,
     }}>
       {children}
-      {toast && <div className="fixed bottom-6 right-6 z-50 max-w-xs rounded-xl bg-fg px-4 py-3 text-sm text-white shadow-lg">{toast}</div>}
+      {toast && <div className="fixed bottom-6 right-6 z-50 max-w-xs rounded-xl bg-fg px-4 py-3 text-sm text-canvas shadow-lg">{toast}</div>}
     </Ctx.Provider>
   )
 }

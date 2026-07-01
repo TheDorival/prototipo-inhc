@@ -7,6 +7,9 @@ service cloud.firestore {
       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
     }
     function isCoord() { return signedIn() && papel() == 'coordenador'; }
+    function catDaSala(sala) {
+      return get(/databases/$(database)/documents/rooms/$(sala)).data.cat;
+    }
 
     // Perfis: cada usuario le todos (para exibir nomes) e edita apenas o proprio
     match /users/{uid} {
@@ -15,17 +18,21 @@ service cloud.firestore {
       allow delete: if false;
     }
 
-    // Salas: todos os autenticados leem; apenas coordenador altera
+    // Salas: todos os autenticados leem; cadastro/edicao completa e so do coordenador,
+    // mas qualquer usuario logado pode atualizar status/sensor ao reservar, cancelar ou liberar uma sala
     match /rooms/{id} {
       allow read: if signedIn();
-      allow write: if isCoord();
+      allow create, delete: if isCoord();
+      allow update: if isCoord()
+        || (signedIn() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'sensor']));
     }
 
     // Reservas: todos leem (necessario para checar conflitos e o painel);
-    // cria a propria; edita/cancela a propria ou sendo coordenador
+    // cria a propria (alunos somente em salas de reuniao/estudo); edita/cancela a propria ou sendo coordenador
     match /reservas/{rid} {
       allow read: if signedIn();
-      allow create: if signedIn() && request.resource.data.uid == request.auth.uid;
+      allow create: if signedIn() && request.resource.data.uid == request.auth.uid
+        && (papel() != 'aluno' || catDaSala(request.resource.data.sala) == 'Sala de Reuniao/Estudo');
       allow update, delete: if signedIn() && (resource.data.uid == request.auth.uid || isCoord());
     }
   }
