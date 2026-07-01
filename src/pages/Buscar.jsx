@@ -34,7 +34,7 @@ export default function Buscar() {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <div className="lg:col-span-1">
           <Card title="Filtros">
-            <span className="mr-1.5 inline-flex items-center rounded-full border border-green/30 bg-okbg px-3 py-1 text-xs font-semibold text-okfg"><Check size={13} className="mr-1" />Disponibilidade imediata</span>
+            <p className="mb-3 flex items-center gap-1.5 text-xs text-muted"><Check size={14} className="text-green" /> Mostrando apenas salas livres agora.</p>
             <div className="mt-1">
               {FILTROS.map((x) => (
                 <button key={x.f} onClick={() => setSel((s) => ({ ...s, [x.f]: !s[x.f] }))}
