@@ -1,3 +1,5 @@
+import { Users } from 'lucide-react'
+
 export const Card = ({ title, children, className = '' }) => (
   <div className={'card mb-5 ' + className}>
     {title && <div className="border-b border-line px-5 py-3.5 text-sm font-semibold text-fg">{title}</div>}
@@ -48,7 +50,7 @@ export function MapaSalas({ rooms, onSelect, selected, allowAll }) {
             ].join(' ')}>
             <b className="text-sm font-bold">{r.id}</b>
             <small className="mt-0.5 block text-[11px] leading-tight opacity-80">{r.cat}</small>
-            <small className="mt-0.5 block text-[11px] opacity-80">cap. {r.cap}</small>
+            <small className="mt-1 flex items-center justify-center gap-1 text-[11px] opacity-80" title="Capacidade"><Users size={12} /> {r.cap}</small>
           </div>
         )
       })}
