@@ -31,11 +31,11 @@ export const Legenda = () => (
   </div>
 )
 
-export function MapaSalas({ rooms, onSelect, selected }) {
+export function MapaSalas({ rooms, onSelect, selected, allowAll }) {
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
       {rooms.map((r) => {
-        const clickable = onSelect && r.status === 'livre'
+        const clickable = onSelect && (allowAll || r.status === 'livre')
         return (
           <div key={r.id}
             onClick={() => clickable && onSelect(r.id)}
