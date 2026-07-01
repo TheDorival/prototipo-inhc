@@ -1,9 +1,20 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { FileDown, CheckCircle2, Search, Lock, AlertTriangle } from 'lucide-react'
+import {
+  FileDown, CheckCircle2, Search, Lock, AlertTriangle, Users,
+  Projector, Plug, Snowflake, Monitor, Presentation,
+} from 'lucide-react'
 import { useStore } from '../store.jsx'
 import { download } from '../data.js'
-import { Card, Legenda, MapaSalas, PageHead } from '../ui.jsx'
+import { Card, Legenda, MapaSalas, PageHead, Tag } from '../ui.jsx'
+
+const EQUIP_ICON = {
+  'Projetor': Projector,
+  'Tomada': Plug,
+  'Ar-condicionado': Snowflake,
+  'Computadores': Monitor,
+  'Quadro': Presentation,
+}
 
 export default function Agendar() {
   const { rooms, agendar } = useStore()
@@ -51,13 +62,37 @@ export default function Agendar() {
           <input className="input" placeholder="Motivo da reserva" value={form.just} onChange={set('just')} />
 
           <div className="mt-4 border-t border-line pt-4">
-            {!selRoom && !ok && <p className="text-sm text-muted">Selecione uma sala no mapa ao lado para agendar.</p>}
+            {!selRoom && !ok && <p className="text-sm text-muted">Selecione uma sala no mapa ao lado para ver os detalhes e agendar.</p>}
+
+            {selRoom && (
+              <div className="mb-3 rounded-lg border border-line bg-subtle p-3">
+                <div className="flex items-center justify-between">
+                  <b className="text-base text-fg">{selRoom.id}</b>
+                  <Tag status={selRoom.status} />
+                </div>
+                <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted">
+                  <span>{selRoom.cat}</span>
+                  <span>Bloco {selRoom.bloco}</span>
+                  <span className="flex items-center gap-1"><Users size={13} /> {selRoom.cap} lugares</span>
+                </div>
+                <div className="mt-2.5">
+                  <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-muted">Equipamentos</div>
+                  {(!selRoom.equip || selRoom.equip.length === 0)
+                    ? <span className="text-xs text-muted">Nenhum equipamento cadastrado.</span>
+                    : (
+                      <div className="flex flex-wrap gap-1.5">
+                        {selRoom.equip.map((e) => {
+                          const Ic = EQUIP_ICON[e]
+                          return <span key={e} className="flex items-center gap-1 rounded-full border border-line bg-canvas px-2.5 py-1 text-[11px] font-medium text-fg">{Ic && <Ic size={12} className="text-accent" />} {e}</span>
+                        })}
+                      </div>
+                    )}
+                </div>
+              </div>
+            )}
 
             {selRoom && selRoom.status === 'livre' && (
-              <>
-                <div className="mb-3 rounded-lg border border-line bg-subtle p-3 text-sm text-fg">Sala selecionada: <b>{selRoom.id}</b> · {selRoom.cat} · cap. {selRoom.cap}</div>
-                <button onClick={confirmar} className="btn btn-primary w-full">Confirmar agendamento</button>
-              </>
+              <button onClick={confirmar} className="btn btn-primary w-full">Confirmar agendamento</button>
             )}
             {selRoom && selRoom.status === 'reservada' && (
               <div className="flex items-start gap-2 rounded-lg border border-warn/40 bg-warnbg p-3 text-sm text-fg">
