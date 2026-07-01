@@ -33,22 +33,22 @@ export const Legenda = () => (
 
 export function MapaSalas({ rooms, onSelect, selected, allowAll }) {
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+    <div className="grid auto-rows-fr grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
       {rooms.map((r) => {
         const clickable = onSelect && (allowAll || r.status === 'livre')
         return (
           <div key={r.id}
             onClick={() => clickable && onSelect(r.id)}
             className={[
-              'rounded-xl p-3.5 text-center transition',
+              'flex min-h-[104px] flex-col items-center justify-center rounded-xl p-3 text-center transition',
               roomBg[r.status],
               clickable ? 'cursor-pointer hover:brightness-95' : 'cursor-default',
               selected === r.id ? 'ring-2 ring-accent ring-offset-2' : '',
               r.status === 'ocupada' ? 'opacity-90' : '',
             ].join(' ')}>
             <b className="text-sm font-bold">{r.id}</b>
-            <small className="mt-0.5 block text-[11px] opacity-80">{r.cat}</small>
-            <small className="block text-[11px] opacity-80">cap. {r.cap}</small>
+            <small className="mt-0.5 block text-[11px] leading-tight opacity-80">{r.cat}</small>
+            <small className="mt-0.5 block text-[11px] opacity-80">cap. {r.cap}</small>
           </div>
         )
       })}
