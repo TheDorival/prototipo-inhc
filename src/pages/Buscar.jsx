@@ -71,7 +71,7 @@ export default function Buscar() {
                       <small className="mt-0.5 block text-xs text-muted">{r.cat} · Bloco {r.bloco} · cap. {r.cap}</small>
                       <div className="mt-1 truncate text-[11px] text-muted">{r.equip.join(' · ')}</div>
                     </div>
-                    <button onClick={() => reservar(r.id)} className={'btn shrink-0 ' + (i === 0 ? 'btn-primary' : '')}>Reservar</button>
+                    <button onClick={() => reservar(r.id)} className="btn btn-primary shrink-0">Reservar</button>
                   </div>
                 ))}
               </div>
