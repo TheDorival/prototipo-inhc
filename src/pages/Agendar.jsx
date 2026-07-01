@@ -34,7 +34,7 @@ export default function Agendar() {
 
   return (
     <>
-      <PageHead title="Novo agendamento" sub="Escolha data, horario e categoria, depois selecione uma sala livre no mapa do campus." />
+      <PageHead title="Novo agendamento" sub="Preencha os dados a esquerda e selecione uma sala livre no mapa do campus a direita." />
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Card title="Dados da reserva">
           <label className="lbl">Data</label>
@@ -49,6 +49,40 @@ export default function Agendar() {
           </select>
           <label className="lbl mt-3">Justificativa</label>
           <input className="input" placeholder="Motivo da reserva" value={form.just} onChange={set('just')} />
+
+          <div className="mt-4 border-t border-line pt-4">
+            {!selRoom && !ok && <p className="text-sm text-muted">Selecione uma sala no mapa ao lado para agendar.</p>}
+
+            {selRoom && selRoom.status === 'livre' && (
+              <>
+                <div className="mb-3 rounded-lg border border-line bg-subtle p-3 text-sm text-fg">Sala selecionada: <b>{selRoom.id}</b> · {selRoom.cat} · cap. {selRoom.cap}</div>
+                <button onClick={confirmar} className="btn btn-primary w-full">Confirmar agendamento</button>
+              </>
+            )}
+            {selRoom && selRoom.status === 'reservada' && (
+              <div className="flex items-start gap-2 rounded-lg border border-warn/40 bg-warnbg p-3 text-sm text-fg">
+                <Lock size={16} className="mt-0.5 shrink-0 text-warn" />
+                <span>A sala <b>{selRoom.id}</b> esta <b>reservada</b> para outro horario e nao pode ser agendada. Selecione uma sala livre (verde).</span>
+              </div>
+            )}
+            {selRoom && selRoom.status === 'ocupada' && (
+              <div className="flex items-start gap-2 rounded-lg border border-danger/40 bg-dangerbg p-3 text-sm text-fg">
+                <AlertTriangle size={16} className="mt-0.5 shrink-0 text-danger" />
+                <span>A sala <b>{selRoom.id}</b> esta <b>ocupada</b> no momento e nao pode ser reservada. Selecione uma sala livre (verde).</span>
+              </div>
+            )}
+            {erro && <div className="mt-3 rounded-lg border border-danger/30 bg-dangerbg p-3 text-sm text-danger">{erro}</div>}
+
+            {ok && (
+              <>
+                <div className="rounded-lg border border-green/30 bg-okbg p-3 text-sm text-okfg"><b className="mb-0.5 flex items-center gap-1.5"><CheckCircle2 size={15} /> Agendamento confirmado</b>Sala {ok.sala} reservada para {ok.data}, {ok.inicio} as {ok.fim}.</div>
+                <div className="mt-3 flex gap-2.5">
+                  <button onClick={baixar} className="btn"><FileDown size={15} /> Baixar comprovante</button>
+                  <button onClick={() => nav('/agendamentos')} className="btn">Ver reservas</button>
+                </div>
+              </>
+            )}
+          </div>
         </Card>
 
         <Card title="Mapa do campus">
@@ -60,36 +94,6 @@ export default function Agendar() {
           {filtradas.length === 0
             ? <div className="py-6 text-center text-sm text-muted">Nenhuma sala encontrada para "{busca}".</div>
             : <MapaSalas rooms={filtradas} onSelect={setSala} selected={sala} allowAll />}
-
-          {selRoom && selRoom.status === 'livre' && (
-            <div className="mt-4">
-              <div className="mb-3 rounded-lg border border-line bg-subtle p-3 text-sm text-fg">Sala <b>{selRoom.id}</b> selecionada · {selRoom.cat} · cap. {selRoom.cap}</div>
-              <button onClick={confirmar} className="btn btn-primary">Confirmar agendamento</button>
-            </div>
-          )}
-          {selRoom && selRoom.status === 'reservada' && (
-            <div className="mt-4 flex items-start gap-2 rounded-lg border border-warn/40 bg-warnbg p-3 text-sm text-fg">
-              <Lock size={16} className="mt-0.5 shrink-0 text-warn" />
-              <span>A sala <b>{selRoom.id}</b> esta <b>reservada</b> para outro horario e nao pode ser agendada. Selecione uma sala livre (verde).</span>
-            </div>
-          )}
-          {selRoom && selRoom.status === 'ocupada' && (
-            <div className="mt-4 flex items-start gap-2 rounded-lg border border-danger/40 bg-dangerbg p-3 text-sm text-fg">
-              <AlertTriangle size={16} className="mt-0.5 shrink-0 text-danger" />
-              <span>A sala <b>{selRoom.id}</b> esta <b>ocupada</b> no momento e nao pode ser reservada. Selecione uma sala livre (verde).</span>
-            </div>
-          )}
-          {erro && <div className="mt-3 rounded-lg border border-danger/30 bg-dangerbg p-3 text-sm text-danger">{erro}</div>}
-
-          {ok && (
-            <>
-              <div className="mt-4 rounded-lg border border-green/30 bg-okbg p-3 text-sm text-okfg"><b className="mb-0.5 flex items-center gap-1.5"><CheckCircle2 size={15} /> Agendamento confirmado</b>Sala {ok.sala} reservada para {ok.data}, {ok.inicio} as {ok.fim}.</div>
-              <div className="mt-3 flex gap-2.5">
-                <button onClick={baixar} className="btn"><FileDown size={15} /> Baixar comprovante</button>
-                <button onClick={() => nav('/agendamentos')} className="btn">Ver reservas</button>
-              </div>
-            </>
-          )}
         </Card>
       </div>
     </>
