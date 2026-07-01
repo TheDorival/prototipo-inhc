@@ -1,4 +1,10 @@
-import { NavLink, Navigate, Route, Routes } from 'react-router-dom'
+import { useState } from 'react'
+import { NavLink, Navigate, Route, Routes, useLocation } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
+import {
+  LayoutDashboard, Search, CalendarPlus, MapPin, Map, ClipboardList,
+  BarChart3, Building2, LogOut, Sun, Moon,
+} from 'lucide-react'
 import { AuthProvider, useAuth } from './auth.jsx'
 import { StoreProvider } from './store.jsx'
 import Login from './pages/Login.jsx'
@@ -14,20 +20,20 @@ import AdminSalas from './pages/AdminSalas.jsx'
 
 const ALL = ['professor', 'aluno', 'coordenador']
 const NAV = [
-  { to: '/', label: 'Inicio', ic: '◧', end: true, roles: ALL },
+  { to: '/', label: 'Inicio', Icon: LayoutDashboard, end: true, roles: ALL },
   { g: 'Operacoes' },
-  { to: '/buscar', label: 'Buscar sala', ic: '🔍', roles: ['professor', 'coordenador'] },
-  { to: '/agendar', label: 'Novo agendamento', ic: '🗓', roles: ALL },
-  { to: '/localizar', label: 'Localizar sala', ic: '📍', roles: ALL },
-  { to: '/mapa', label: 'Mapa do campus', ic: '🗺', roles: ALL },
+  { to: '/buscar', label: 'Buscar sala', Icon: Search, roles: ['professor', 'coordenador'] },
+  { to: '/agendar', label: 'Novo agendamento', Icon: CalendarPlus, roles: ALL },
+  { to: '/localizar', label: 'Localizar sala', Icon: MapPin, roles: ALL },
+  { to: '/mapa', label: 'Mapa do campus', Icon: Map, roles: ALL },
   { g: 'Gestao' },
-  { to: '/agendamentos', label: 'Minhas reservas', ic: '📋', roles: ALL },
-  { to: '/painel', label: 'Painel de controle', ic: '📊', roles: ['coordenador'] },
-  { to: '/admin', label: 'Salas (admin)', ic: '🏫', roles: ['coordenador'] },
+  { to: '/agendamentos', label: 'Minhas reservas', Icon: ClipboardList, roles: ALL },
+  { to: '/painel', label: 'Painel de controle', Icon: BarChart3, roles: ['coordenador'] },
+  { to: '/admin', label: 'Salas (admin)', Icon: Building2, roles: ['coordenador'] },
 ]
 const ACCESS = {
   '/': ALL, '/buscar': ['professor', 'coordenador'], '/agendar': ALL,
-  '/localizar': ALL, '/painel': ['coordenador'], '/agendamentos': ALL, '/mapa': ALL,
+  '/localizar': ALL, '/painel': ['coordenador'], '/agendamentos': ALL, '/mapa': ALL, '/admin': ['coordenador'],
 }
 
 function Guard({ path, children }) {
@@ -38,12 +44,27 @@ function Guard({ path, children }) {
 
 const iniciais = (nome = '') => nome.trim().split(/\s+/).slice(0, 2).map((p) => p[0]).join('').toUpperCase() || '?'
 
+function ThemeToggle() {
+  const [dark, setDark] = useState(() => document.documentElement.classList.contains('dark'))
+  const toggle = () => {
+    const n = !dark; setDark(n)
+    document.documentElement.classList.toggle('dark', n)
+    try { localStorage.setItem('theme', n ? 'dark' : 'light') } catch (e) {}
+  }
+  return (
+    <button onClick={toggle} className="btn w-full" aria-label="Alternar tema">
+      {dark ? <Sun size={15} /> : <Moon size={15} />}{dark ? 'Tema claro' : 'Tema escuro'}
+    </button>
+  )
+}
+
 function Shell() {
   const { profile, role, sair } = useAuth()
+  const location = useLocation()
   const itens = NAV.filter((n) => n.g || n.roles.includes(role))
   return (
     <div className="min-h-screen bg-subtle">
-      <aside className="fixed left-0 top-0 hidden h-screen w-64 flex-col border-r border-line bg-white md:flex">
+      <aside className="fixed left-0 top-0 hidden h-screen w-64 flex-col border-r border-line bg-canvas md:flex">
         <div className="flex items-center gap-2.5 px-5 py-5">
           <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent text-sm font-bold text-white">GE</span>
           <div className="leading-tight">
@@ -57,35 +78,44 @@ function Shell() {
           ) : (
             <NavLink key={n.to} to={n.to} end={n.end}
               className={({ isActive }) => 'flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition ' + (isActive ? 'bg-accentsoft font-semibold text-accent' : 'text-muted hover:bg-subtle hover:text-fg')}>
-              <span className="w-4 text-center text-[13px]">{n.ic}</span>{n.label}
+              <n.Icon size={17} />{n.label}
             </NavLink>
           ))}
         </nav>
         <div className="border-t border-line p-3">
-          <div className="flex items-center gap-2.5 rounded-lg px-2 py-2">
+          <div className="flex items-center gap-2.5 px-2 py-2">
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accentsoft text-xs font-bold text-accent">{iniciais(profile?.nome)}</span>
             <div className="min-w-0 flex-1 leading-tight">
               <b className="block truncate text-sm text-fg">{profile?.nome}</b>
               <span className="text-[11px] capitalize text-muted">{role}</span>
             </div>
           </div>
-          <button onClick={sair} className="btn mt-2 w-full">Sair</button>
+          <div className="mt-2 flex flex-col gap-2">
+            <ThemeToggle />
+            <button onClick={sair} className="btn"><LogOut size={15} />Sair</button>
+          </div>
         </div>
       </aside>
 
       <main className="md:ml-64">
         <div className="mx-auto max-w-[1500px] px-6 py-8 sm:px-8">
-          <Routes>
-            <Route path="/" element={<Inicio />} />
-            <Route path="/buscar" element={<Guard path="/buscar"><Buscar /></Guard>} />
-            <Route path="/agendar" element={<Agendar />} />
-            <Route path="/localizar" element={<Localizar />} />
-            <Route path="/painel" element={<Guard path="/painel"><Painel /></Guard>} />
-            <Route path="/agendamentos" element={<Agendamentos />} />
-            <Route path="/mapa" element={<Mapa />} />
-            <Route path="/admin" element={<Guard path="/admin"><AdminSalas /></Guard>} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
+          <AnimatePresence mode="wait">
+            <motion.div key={location.pathname}
+              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.18, ease: 'easeOut' }}>
+              <Routes location={location}>
+                <Route path="/" element={<Inicio />} />
+                <Route path="/buscar" element={<Guard path="/buscar"><Buscar /></Guard>} />
+                <Route path="/agendar" element={<Agendar />} />
+                <Route path="/localizar" element={<Localizar />} />
+                <Route path="/painel" element={<Guard path="/painel"><Painel /></Guard>} />
+                <Route path="/agendamentos" element={<Agendamentos />} />
+                <Route path="/mapa" element={<Mapa />} />
+                <Route path="/admin" element={<Guard path="/admin"><AdminSalas /></Guard>} />
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </motion.div>
+          </AnimatePresence>
         </div>
       </main>
     </div>

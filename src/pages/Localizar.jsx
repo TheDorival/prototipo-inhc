@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useStore } from '../store.jsx'
+import { MapPin } from 'lucide-react'
 import { Card, Tag, PageHead } from '../ui.jsx'
 
 const OPCOES = [
@@ -31,7 +32,7 @@ export default function Localizar() {
         <div className="lg:col-span-3">
           {r === undefined && (
             <div className="card flex h-full min-h-[260px] flex-col items-center justify-center p-8 text-center">
-              <span className="mb-2 text-3xl">📍</span>
+              <MapPin size={30} className="mb-2 text-muted" />
               <p className="text-sm text-muted">Selecione uma disciplina e clique em <b className="text-fg">Localizar sala</b> para ver a sala atual e a rota.</p>
             </div>
           )}

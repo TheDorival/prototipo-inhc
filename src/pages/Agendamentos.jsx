@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useStore } from '../store.jsx'
 import { useAuth } from '../auth.jsx'
 import { Card, PageHead } from '../ui.jsx'
@@ -14,8 +15,10 @@ function ModalEditar({ reserva, onClose }) {
     if (r.ok) onClose(); else setErro(r.erro)
   }
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={onClose}>
-      <div className="w-full max-w-sm rounded-xl bg-white p-5 shadow-lg" onClick={(e) => e.stopPropagation()}>
+    <motion.div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={onClose}
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+      <motion.div className="w-full max-w-sm rounded-xl border border-line bg-canvas p-5 shadow-lg" onClick={(e) => e.stopPropagation()}
+        initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} transition={{ duration: 0.15 }}>
         <h3 className="mb-3 text-base font-semibold text-fg">Editar reserva — {reserva.sala}</h3>
         <label className="lbl">Data</label>
         <input type="date" className="input" value={f.data} onChange={set('data')} />
@@ -30,8 +33,8 @@ function ModalEditar({ reserva, onClose }) {
           <button onClick={onClose} className="btn">Cancelar</button>
           <button onClick={salvar} className="btn btn-primary">Salvar</button>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   )
 }
 
@@ -73,7 +76,7 @@ export default function Agendamentos() {
           </div>
         )}
       </Card>
-      {editando && <ModalEditar reserva={editando} onClose={() => setEditando(null)} />}
+      <AnimatePresence>{editando && <ModalEditar reserva={editando} onClose={() => setEditando(null)} />}</AnimatePresence>
     </>
   )
 }

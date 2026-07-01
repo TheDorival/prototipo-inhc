@@ -1,14 +1,15 @@
 import { Link } from 'react-router-dom'
+import { Search, CalendarPlus, MapPin, BarChart3 } from 'lucide-react'
 import { useStore } from '../store.jsx'
 import { useAuth } from '../auth.jsx'
 import { detectConflitos } from '../data.js'
 import { Kpi } from '../ui.jsx'
 
 const FEAT = [
-  { to: '/buscar', ic: '🔍', t: 'Buscar sala agora', p: 'Encontre e reserve uma sala disponivel na hora, com filtros por capacidade e equipamentos.', roles: ['professor', 'coordenador'] },
-  { to: '/agendar', ic: '📅', t: 'Novo agendamento', p: 'Reserve uma sala para data e horario especificos pelo mapa do campus.', roles: ['professor', 'aluno', 'coordenador'] },
-  { to: '/localizar', ic: '📍', t: 'Localizar sala', p: 'Descubra a sala atual de uma disciplina e veja a rota ate ela.', roles: ['professor', 'aluno', 'coordenador'] },
-  { to: '/painel', ic: '📊', t: 'Painel de controle', p: 'Acompanhe a ocupacao em tempo real, resolva conflitos e exporte relatorios.', roles: ['coordenador'] },
+  { to: '/buscar', Icon: Search, t: 'Buscar sala agora', p: 'Encontre e reserve uma sala disponivel na hora, com filtros por capacidade e equipamentos.', roles: ['professor', 'coordenador'] },
+  { to: '/agendar', Icon: CalendarPlus, t: 'Novo agendamento', p: 'Reserve uma sala para data e horario especificos pelo mapa do campus.', roles: ['professor', 'aluno', 'coordenador'] },
+  { to: '/localizar', Icon: MapPin, t: 'Localizar sala', p: 'Descubra a sala atual de uma disciplina e veja a rota ate ela.', roles: ['professor', 'aluno', 'coordenador'] },
+  { to: '/painel', Icon: BarChart3, t: 'Painel de controle', p: 'Acompanhe a ocupacao em tempo real, resolva conflitos e exporte relatorios.', roles: ['coordenador'] },
 ]
 
 export default function Inicio() {
@@ -32,7 +33,7 @@ export default function Inicio() {
         {cards.map((c) => (
           <Link key={c.to} to={c.to} className="card p-4 transition hover:border-accent">
             <div className="mb-2 flex items-center gap-2.5">
-              <span className="flex h-9 w-9 items-center justify-center rounded-md border border-line bg-subtle text-lg">{c.ic}</span>
+              <span className="flex h-9 w-9 items-center justify-center rounded-md border border-line bg-subtle text-accent"><c.Icon size={18} /></span>
               <b className="text-sm font-semibold text-accent">{c.t}</b>
             </div>
             <p className="text-sm leading-relaxed text-muted">{c.p}</p>

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStore } from '../store.jsx'
 import { download } from '../data.js'
+import { FileDown, CheckCircle2 } from 'lucide-react'
 import { Card, Legenda, MapaSalas, PageHead } from '../ui.jsx'
 
 export default function Agendar() {
@@ -49,9 +50,9 @@ export default function Agendar() {
           {erro && <div className="mt-3 rounded-lg border border-danger/30 bg-dangerbg p-3 text-sm text-danger">{erro}</div>}
           {ok && (
             <>
-              <div className="mt-3 rounded-md border border-[#1f883d]/30 bg-okbg p-3 text-sm text-okfg"><b className="block">✓ Agendamento confirmado</b>Sala {ok.sala} reservada para {ok.data}, {ok.inicio} as {ok.fim}.</div>
+              <div className="mt-3 rounded-md border border-[#1f883d]/30 bg-okbg p-3 text-sm text-okfg"><b className="mb-0.5 flex items-center gap-1.5"><CheckCircle2 size={15} /> Agendamento confirmado</b>Sala {ok.sala} reservada para {ok.data}, {ok.inicio} as {ok.fim}.</div>
               <div className="mt-3 flex gap-2.5">
-                <button onClick={baixar} className="btn">📄 Baixar comprovante</button>
+                <button onClick={baixar} className="btn"><FileDown size={15} /> Baixar comprovante</button>
                 <button onClick={() => nav('/agendamentos')} className="btn">Ver reservas</button>
               </div>
             </>

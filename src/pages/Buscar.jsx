@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStore } from '../store.jsx'
+import { CheckCircle2, Check } from 'lucide-react'
 import { Card, Tag, PageHead } from '../ui.jsx'
 
 const FILTROS = [
@@ -29,7 +30,7 @@ export default function Buscar() {
     <>
       <PageHead title="Buscar sala disponivel" sub="Filtre por capacidade e equipamentos e reserve uma sala livre imediatamente." />
       <Card title="Filtros">
-        <span className="mr-1.5 inline-block rounded-full border border-[#1f883d]/30 bg-okbg px-3 py-1 text-xs font-semibold text-okfg">✓ Disponibilidade imediata</span>
+        <span className="mr-1.5 inline-block rounded-full border border-[#1f883d]/30 bg-okbg px-3 py-1 text-xs font-semibold text-okfg"><Check size={13} className="mr-1 inline" />Disponibilidade imediata</span>
         {FILTROS.map((x) => (
           <button key={x.f} onClick={() => setSel((s) => ({ ...s, [x.f]: !s[x.f] }))}
             className={'mr-1.5 mt-1.5 rounded-full border px-3 py-1 text-xs font-semibold ' + (sel[x.f] ? 'border-accent bg-accent/10 text-accent' : 'border-line bg-canvas text-fg hover:bg-subtle')}>{x.label}</button>
